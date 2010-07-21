@@ -1,0 +1,9 @@
+C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Server\bin\Debug\Server.exe
+C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Server\bin\Debug\Server.pdb
+C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Server\bin\Debug\Lidgren.Network.dll
+C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Server\bin\Debug\Lidgren.Network.pdb
+C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Server\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Server\obj\Debug\Server.exe
+C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Server\obj\Debug\Server.pdb
+C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Server\bin\Debug\Shared.dll
+C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Server\bin\Debug\Shared.pdb
