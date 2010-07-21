@@ -1,7 +1,0 @@
-C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Shared\bin\Release\Shared.dll
-C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Shared\bin\Release\Shared.pdb
-C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Shared\bin\Release\Lidgren.Network.dll
-C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Shared\bin\Release\Lidgren.Network.pdb
-C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Shared\obj\Release\ResolveAssemblyReference.cache
-C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Shared\obj\Release\Shared.dll
-C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Shared\obj\Release\Shared.pdb
