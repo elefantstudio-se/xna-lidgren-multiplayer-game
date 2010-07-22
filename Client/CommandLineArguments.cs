@@ -12,7 +12,7 @@ namespace Client
 
         //private static readonly CommandLineArguments Defaults = new CommandLineArguments("uploadz.myftp.org", 8081); 
         //private static readonly CommandLineArguments Defaults = new CommandLineArguments("78.133.42.34", 8081); 
-        private static readonly CommandLineArguments Defaults = new CommandLineArguments("localhost", 8081); 
+        private static readonly CommandLineArguments Defaults = new CommandLineArguments("dreaslaptop", 8081); 
 
         public CommandLineArguments(string host, int port)
         {

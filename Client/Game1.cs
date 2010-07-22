@@ -58,14 +58,11 @@ namespace Client
             BackgroundColor = Color.CornflowerBlue;
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Services.AddService(typeof(SpriteBatch), spriteBatch);
-            remotePlayerList = new RemoteObjectList(this, "Players/Avatars/", SharedLists.PlayerTextureNames);
-            remoteProjectileList = new RemoteObjectList(this, "Players/Projectiles/", SharedLists.ProjectileTextureNames);
+            remotePlayerList = new RemoteObjectList(this, "Players/Avatars/", SharedLists.PlayerTextureNames, new PlayerUpdater());
+            remoteProjectileList = new RemoteObjectList(this, "Players/Projectiles/", SharedLists.ProjectileTextureNames, new ProjectileUpdater());
             SharedLists.Players = remotePlayerList.ObjectsData;
             SharedLists.Projectiles = remotePlayerList.ObjectsData;
 
-            //client.DiscoverLocalPeers(PORT);
-            //client.DiscoverKnownPeer(new IPEndPoint(IPAddress.Parse("78.133.42.34"), PORT));
-            //client.DiscoverKnownPeer("dreaslaptop", PORT);
             client.DiscoverKnownPeer(host, port);
             base.Initialize();
         }
@@ -105,6 +102,8 @@ namespace Client
             {
                 localPlayer.Update(gameTime);
             }
+            remotePlayerList.Update(gameTime);
+            remoteProjectileList.Update(gameTime);
             if (NetTime.Now > nextSendUpdate)
             {
                 if (localPlayer != null)
@@ -163,7 +162,7 @@ namespace Client
         {
             
             var data = msg.ReadObjectData();
-            localPlayer = new Player(this, data.SessionID, data.Index, SharedLists.PlayerTextureNames[data.Index], data.Position, 0, 0.5f, new KeyboardControls(Keys.Up, Keys.Down, Keys.Left, Keys.Right, Keys.Space), data.BoundsCenterOffset);
+            localPlayer = new Player(this, data.SessionID, data.ID, data.Index,  SharedLists.PlayerTextureNames[data.Index], data.Position, 0, 0.5f, new KeyboardControls(Keys.Up, Keys.Down, Keys.Left, Keys.Right, Keys.Space), data.BoundsCenterOffset);
             localPlayer.PlayerUpdated += (s, e) => SendLocalPlayerData();
             localPlayer.ProjectileFired += (s, e) =>
                                                {
@@ -197,7 +196,7 @@ namespace Client
             {
                 NetOutgoingMessage om = client.CreateMessage();
                 om.Write("projectile_data");
-                om.Write(new TransferableObjectData(localPlayer.SessionID, localPlayer.ID, localPlayer.Index,projectile.Position,projectile.Angle,projectile.BoundsCenter));
+                om.Write(new TransferableObjectData(localPlayer.SessionID, projectile.ID, localPlayer.Index,projectile.Position,projectile.Angle,projectile.BoundsCenter));
                 client.SendMessage(om, NetDeliveryMethod.Unreliable);
             }
         }

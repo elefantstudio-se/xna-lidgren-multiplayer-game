@@ -13,7 +13,7 @@ namespace Client
         public short Index { get; set; }
 
         KeyboardControls Controls { get; set; }
-        private int speed = 2;
+        private int speed = 10;
         private int rotationSpeed = 5;
         public List<Projectile> Projectiles{ get; set;}
         private double lastShotFired = 0;
@@ -23,8 +23,11 @@ namespace Client
         public event EventHandler<BumpedAnotherPlayerEventArgs> BumpedAnotherPlayer = delegate { };
 
 
-        public Player(Game game, long sessionId, short index, string imageAsset, Vector2 position, float angle, float zOrder, KeyboardControls controls) : this(game, sessionId, index, imageAsset, position, angle, zOrder, controls, new Vector2(0))
+        public Player(Game game, long sessionId, int id, short index, string imageAsset, Vector2 position, float angle, float zOrder, KeyboardControls controls, Vector2 boundsCenterOffset) : base(game, sessionId, id, imageAsset, position, angle, zOrder, boundsCenterOffset)
         {
+            Index = index;
+            Controls = controls;
+            Projectiles = new List<Projectile>();
         }
         public Player(Game game, long sessionId, short index, string imageAsset, Vector2 position, float angle, float zOrder, KeyboardControls controls, Vector2 boundsCenterOffset) : base(game, sessionId, imageAsset, position, angle, zOrder, boundsCenterOffset)
         {
@@ -160,7 +163,7 @@ namespace Client
                 return false;
             }
             lastShotFired = gameTime.TotalGameTime.TotalMilliseconds;
-            var newProjectile = new Projectile(game, SessionID, SharedLists.ProjectileTextureNames[Index], Position, Angle, 0.5f, 10);
+            var newProjectile = new Projectile(game, SessionID, SharedLists.ProjectileTextureNames[Index], Position, Angle, 0.5f, 10, Vector2.Zero);
             newProjectile.Hit += (s, e) => { };
             Projectiles.Add(newProjectile);
             ProjectileFired(this, new ProjectileFiredEventArgs(newProjectile));

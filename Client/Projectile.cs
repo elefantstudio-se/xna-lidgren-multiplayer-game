@@ -11,10 +11,6 @@ namespace Client
         public int Speed { get; set; }
         public event EventHandler<ProjectileHitAnotherPlayerEventArgs> Hit = delegate { };
 
-        public Projectile(Game game, long sessionId, string imageAsset, Vector2 position, float angle, float zOrder, int speed) : this(game, sessionId, imageAsset, position, angle, zOrder, speed, new Vector2(0))
-        {
-        }
-
         public Projectile(Game game, long sessionId, string imageAsset, Vector2 position, float angle, float zOrder, int speed, Vector2 boundsCenterOffset) : base(game, sessionId, imageAsset, position, angle, zOrder, boundsCenterOffset)
         {
             Speed = speed;

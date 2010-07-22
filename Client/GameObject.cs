@@ -55,10 +55,10 @@ namespace Client
         private readonly string imageAssetName;
         protected Rectangle ScreenBounds { get; private set;}
 
-        protected GameObject(Game game, long sessionId, string imageAsset, Vector2 position, float angle, float zOrder)
+        protected GameObject(Game game, long sessionId, int id, string imageAsset, Vector2 position, float angle, float zOrder, Vector2 boundsCenterOffset)
         {
             SessionID = sessionId;
-            ID = Shared.Helpers.GetNewID();
+            ID = id;
             Position = position;
             Angle = angle;
             ZOrder = zOrder;
@@ -69,13 +69,10 @@ namespace Client
             ScreenBounds = new Rectangle(0, 0, game.GraphicsDevice.PresentationParameters.BackBufferWidth, game.GraphicsDevice.PresentationParameters.BackBufferHeight);
             TextureData = new Color[Texture.Width*Texture.Height];
             Texture.GetData(TextureData);
-            BoundsCenter = new Vector2(Width/2, Height/2);
+            BoundsCenter = new Vector2(Width/2, Height/2) + boundsCenterOffset;
+            
         }
-
-        protected GameObject(Game game, long sessionId, string imageAsset, Vector2 position, float angle, float zOrder, Vector2 boundsCenterOffset): this(game, sessionId, imageAsset, position, angle, zOrder)
-        {
-            BoundsCenter += boundsCenterOffset;
-        }
+        protected GameObject(Game game, long sessionId, string imageAsset, Vector2 position, float angle, float zOrder, Vector2 boundsCenterOffset):this(game, sessionId, Shared.Helpers.GetNewID(), imageAsset,position,angle,zOrder,boundsCenterOffset) { }
 
         public virtual void Initialize() { } 
 

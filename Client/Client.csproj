@@ -92,12 +92,14 @@
     <Compile Include="CollisionHelpers.cs" />
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="GameObject.cs" />
-    <Compile Include="IIdentifiable.cs" />
+    <Compile Include="IUpdateable.cs" />
     <Compile Include="KeyboardControls.cs" />
     <Compile Include="ObjectData.cs" />
     <Compile Include="Player.cs" />
+    <Compile Include="PlayerUpdater.cs" />
     <Compile Include="ProjectileFiredEventArgs.cs" />
     <Compile Include="ProjectileHitAnotherPlayerEventArgs.cs" />
+    <Compile Include="ProjectileUpdater.cs" />
     <Compile Include="RemoteObjectList.cs" />
     <Compile Include="Projectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

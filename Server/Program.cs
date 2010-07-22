@@ -77,7 +77,7 @@ namespace Server
             {
                 var newPlayerData = SendInitialData(msg.SenderConnection);
                 players[newPlayerData.SessionID] = newPlayerData;
-                InformAboutNewPlayer(newPlayerData);
+                SendPlayersData();
             }
         }
 
@@ -110,7 +110,7 @@ namespace Server
         {
             short playerIndex = nextPlayerIndex++;
             Vector2 initialPosition = new Vector2(randomizer.Next(screenWidth), randomizer.Next(screenHeight));
-            var data = new TransferableObjectData(receiver.RemoteUniqueIdentifier, Shared.Helpers.GetNewID(), playerIndex, initialPosition, 0f, new Vector2(0, 10));
+            var data = new TransferableObjectData(receiver.RemoteUniqueIdentifier, Helpers.GetNewID(), playerIndex, initialPosition, 0f, new Vector2(0, 10));
             NetOutgoingMessage om = server.CreateMessage();
             om.Write("new_connection");
             om.Write(data);
@@ -120,21 +120,6 @@ namespace Server
             Console.WriteLine(String.Format("X: {0}, Y: {1}", initialPosition.X, initialPosition.Y));
 
             return data;
-        }
-
-        static void InformAboutNewPlayer(TransferableObjectData newPlayerData)
-        {
-            foreach (var player in server.Connections)
-            {
-                if (player.RemoteUniqueIdentifier == newPlayerData.SessionID)
-                {
-                    continue;
-                }
-                NetOutgoingMessage om = server.CreateMessage();
-                om.Write("new_player");
-                om.Write(newPlayerData);
-                server.SendMessage(om, player, NetDeliveryMethod.Unreliable);
-            }
         }
 
         static void SendPlayersData()

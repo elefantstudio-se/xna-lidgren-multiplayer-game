@@ -17,38 +17,32 @@ namespace Client
         private readonly SpriteBatch spriteBatch;
         private readonly string texturesPath;
         private string[] textureNames;
+        private IUpdateable updater;
 
-        private const short CorrectionThreshold = 3;
-        private const float InterpolationConstant = 0.2f;
 
-        public RemoteObjectList(Game game, string texturesPath, string[] textureNames)
+        public RemoteObjectList(Game game, string texturesPath, string[] textureNames, IUpdateable updater)
         {
             this.game = game;
             this.texturesPath = texturesPath;
             this.textureNames = textureNames;
+            this.updater = updater;
             spriteBatch = (SpriteBatch) game.Services.GetService(typeof (SpriteBatch));
             ObjectsData = new Dictionary<int, ObjectData>();
         }
 
+        public void Update(GameTime gameTime)
+        {
+            foreach (var obj in ObjectsData.Values)
+            {
+                obj.LocalData.Position = updater.UpdatePosition(obj.LocalData.Position, obj.RemoteData.Position);
+                obj.LocalData.Angle = updater.UpdateAngle(obj.LocalData.Angle, obj.RemoteData.Angle);
+            }
+        }
         public void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
             foreach (var obj in ObjectsData.Values)
             {
-                var positionDifference = obj.RemoteData.Position - obj.LocalData.Position;
-                float newX = positionDifference.X * InterpolationConstant, newY = positionDifference.Y * InterpolationConstant;
-                if (positionDifference.X > 0 && positionDifference.X < CorrectionThreshold)
-                {
-                    newX = positionDifference.X;
-                }
-
-                if (positionDifference.Y > 0 && positionDifference.Y < CorrectionThreshold)
-                {
-                    newY = positionDifference.Y;
-                }
-
-                obj.LocalData.Position += new Vector2(newX, newY);
-                obj.LocalData.Angle = obj.RemoteData.Angle;
                 spriteBatch.Draw(obj.Texture, obj.LocalData.Position, null, Color.White, obj.LocalData.Angle, obj.RemoteData.BoundsCenterOffset, 1f, SpriteEffects.None, 0.5f);
             }
             spriteBatch.End();

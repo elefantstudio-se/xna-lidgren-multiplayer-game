@@ -9,7 +9,8 @@ namespace Shared
     {
         public static int GetNewID()
         {
-            return Convert.ToInt32(DateTime.Now.Ticks.ToString().Substring(0, 4));
+            var n = DateTime.Now.Ticks.ToString();
+            return Convert.ToInt32(n.Substring(n.Length - 4,4));
         }
     }
 }
