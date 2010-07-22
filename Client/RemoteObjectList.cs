@@ -15,16 +15,12 @@ namespace Client
 
         private readonly Game game;
         private readonly SpriteBatch spriteBatch;
-        private readonly string texturesPath;
-        private string[] textureNames;
         private IUpdateable updater;
 
 
-        public RemoteObjectList(Game game, string texturesPath, string[] textureNames, IUpdateable updater)
+        public RemoteObjectList(Game game, IUpdateable updater)
         {
             this.game = game;
-            this.texturesPath = texturesPath;
-            this.textureNames = textureNames;
             this.updater = updater;
             spriteBatch = (SpriteBatch) game.Services.GetService(typeof (SpriteBatch));
             ObjectsData = new Dictionary<int, ObjectData>();
@@ -43,20 +39,24 @@ namespace Client
             spriteBatch.Begin();
             foreach (var obj in ObjectsData.Values)
             {
-                spriteBatch.Draw(obj.Texture, obj.LocalData.Position, null, Color.White, obj.LocalData.Angle, obj.RemoteData.BoundsCenterOffset, 1f, SpriteEffects.None, 0.5f);
+                spriteBatch.Draw(obj.Texture, obj.LocalData.Position, null, Color.White, obj.LocalData.Angle, obj.Origin, 1f, SpriteEffects.None, 0.5f);
             }
             spriteBatch.End();
         }
         
-        public void Update(TransferableObjectData data)
+        public void UpdateData(TransferableObjectData data)
         {
-            if (!ObjectsData.ContainsKey(data.ID))
-            {
-                ObjectsData[data.ID] = new ObjectData(data, game.Content.Load<Texture2D>(texturesPath + textureNames[data.Index]));
-            }
-            else {
-                ObjectsData[data.ID].RemoteData = data;
-            }
+            ObjectsData[data.ID].RemoteData = data;
+        }
+
+        public bool Exists(int id)
+        {
+            return ObjectsData.ContainsKey(id);
+        }
+
+        public void Add(TransferableObjectData data, Texture2D texture, Vector2 centerOffset)
+        {
+            ObjectsData.Add(data.ID, new ObjectData(data,texture,centerOffset));
         }
     }
 }

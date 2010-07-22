@@ -54,7 +54,7 @@ namespace Server
                     double now = NetTime.Now;
                     if (now > nextSendUpdates) //Send new updates
                     {
-                        SendPlayersData();
+                        SendProjectilesData();
 
                         nextSendUpdates += (1.0/30.0);
                     }
@@ -98,6 +98,7 @@ namespace Server
             {
                 players[data.SessionID] = data;
             }
+            SendPlayersData();
         }
 
         static void ReceivedProjectileData(NetIncomingMessage msg)
@@ -110,7 +111,7 @@ namespace Server
         {
             short playerIndex = nextPlayerIndex++;
             Vector2 initialPosition = new Vector2(randomizer.Next(screenWidth), randomizer.Next(screenHeight));
-            var data = new TransferableObjectData(receiver.RemoteUniqueIdentifier, Helpers.GetNewID(), playerIndex, initialPosition, 0f, new Vector2(0, 10));
+            var data = new TransferableObjectData(receiver.RemoteUniqueIdentifier, Helpers.GetNewID(), playerIndex, initialPosition, 0f);
             NetOutgoingMessage om = server.CreateMessage();
             om.Write("new_connection");
             om.Write(data);
@@ -122,27 +123,17 @@ namespace Server
             return data;
         }
 
-        static void SendPlayersData()
+        static void SendProjectilesData()
         {
-            foreach(NetConnection player in server.Connections)
+            if (projectiles.Count == 0)
             {
-                foreach (NetConnection otherPlayer in server.Connections)
-                {
-                    if (player.RemoteUniqueIdentifier == otherPlayer.RemoteUniqueIdentifier || !players.ContainsKey(otherPlayer.RemoteUniqueIdentifier))
-                    {
-                        continue;
-                    }
-                    NetOutgoingMessage om = server.CreateMessage();
-                    var data = players[otherPlayer.RemoteUniqueIdentifier];
-                    om.Write("player_data");
-                    om.Write(data);
-
-                    server.SendMessage(om, player, NetDeliveryMethod.Unreliable);
-                }
-
+                return;
+            }
+            foreach (var client in server.Connections)
+            {
                 foreach (var projectile in projectiles.Values)
                 {
-                    if (projectile.SessionID == player.RemoteUniqueIdentifier)
+                    if (projectile.SessionID == client.RemoteUniqueIdentifier)
                     {
                         continue;
                     }
@@ -150,7 +141,26 @@ namespace Server
                     om.Write("projectile_data");
                     om.Write(projectile);
 
-                    server.SendMessage(om, player, NetDeliveryMethod.Unreliable);
+                    server.SendMessage(om, client, NetDeliveryMethod.Unreliable);
+                }
+            }
+        }
+        static void SendPlayersData()
+        {
+            foreach(NetConnection client in server.Connections)
+            {
+                foreach (NetConnection otherClient in server.Connections)
+                {
+                    if (client.RemoteUniqueIdentifier == otherClient.RemoteUniqueIdentifier || !players.ContainsKey(otherClient.RemoteUniqueIdentifier))
+                    {
+                        continue;
+                    }
+                    NetOutgoingMessage om = server.CreateMessage();
+                    var data = players[otherClient.RemoteUniqueIdentifier];
+                    om.Write("player_data");
+                    om.Write(data);
+
+                    server.SendMessage(om, client, NetDeliveryMethod.Unreliable);
                 }
             }
         }

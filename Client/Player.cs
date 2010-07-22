@@ -16,20 +16,13 @@ namespace Client
         private int speed = 10;
         private int rotationSpeed = 5;
         public List<Projectile> Projectiles{ get; set;}
-        private double lastShotFired = 0;
-        private double fireInterval = 1000;
+        private double lastShotFired;
+        private double fireInterval = 300;
         public event EventHandler PlayerUpdated = delegate { };
         public event EventHandler<ProjectileFiredEventArgs> ProjectileFired = delegate { };
         public event EventHandler<BumpedAnotherPlayerEventArgs> BumpedAnotherPlayer = delegate { };
 
-
         public Player(Game game, long sessionId, int id, short index, string imageAsset, Vector2 position, float angle, float zOrder, KeyboardControls controls, Vector2 boundsCenterOffset) : base(game, sessionId, id, imageAsset, position, angle, zOrder, boundsCenterOffset)
-        {
-            Index = index;
-            Controls = controls;
-            Projectiles = new List<Projectile>();
-        }
-        public Player(Game game, long sessionId, short index, string imageAsset, Vector2 position, float angle, float zOrder, KeyboardControls controls, Vector2 boundsCenterOffset) : base(game, sessionId, imageAsset, position, angle, zOrder, boundsCenterOffset)
         {
             Index = index;
             Controls = controls;
@@ -91,7 +84,7 @@ namespace Client
             {
                 if (boundRectangle.Intersects(player.BoundingRectangle))
                 {
-                    if (CollisionHelpers.IntersectPixels(transformation,Width,Height,TextureData,player.Transform,player.Texture.Width,player.Texture.Height,player.TextureData))
+                    if (CollisionHelpers.IntersectPixels(transformation, Width, Height, TextureData, player.Transform, player.Texture.Width, player.Texture.Height, player.TextureData))
                     {
                         collidedPlayer = player;
                         break;
@@ -165,6 +158,11 @@ namespace Client
             lastShotFired = gameTime.TotalGameTime.TotalMilliseconds;
             var newProjectile = new Projectile(game, SessionID, SharedLists.ProjectileTextureNames[Index], Position, Angle, 0.5f, 10, Vector2.Zero);
             newProjectile.Hit += (s, e) => { };
+            //newProjectile.OutOfScreen += (s, e) =>
+            //                                 {
+            //                                     Projectiles.Remove(newProjectile);
+            //                                     Console.WriteLine("removed");
+            //                                 };
             Projectiles.Add(newProjectile);
             ProjectileFired(this, new ProjectileFiredEventArgs(newProjectile));
             return true;

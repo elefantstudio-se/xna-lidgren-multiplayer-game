@@ -13,16 +13,14 @@ namespace Shared
         public short Index { get; set; }
         public Vector2 Position { get; set; }
         public float Angle { get; set; }
-        public Vector2 BoundsCenterOffset { get; set; }
 
-        public TransferableObjectData(long sessionId, int id, short index, Vector2 position, float angle, Vector2 boundsCenterOffset)
+        public TransferableObjectData(long sessionId, int id, short index, Vector2 position, float angle)
         {
             SessionID = sessionId;
             ID = id;
             Index = index;
             Position = position;
             Angle = angle;
-            BoundsCenterOffset = boundsCenterOffset;
         }
     }
 }

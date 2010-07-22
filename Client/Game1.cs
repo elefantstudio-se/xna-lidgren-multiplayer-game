@@ -58,8 +58,8 @@ namespace Client
             BackgroundColor = Color.CornflowerBlue;
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Services.AddService(typeof(SpriteBatch), spriteBatch);
-            remotePlayerList = new RemoteObjectList(this, "Players/Avatars/", SharedLists.PlayerTextureNames, new PlayerUpdater());
-            remoteProjectileList = new RemoteObjectList(this, "Players/Projectiles/", SharedLists.ProjectileTextureNames, new ProjectileUpdater());
+            remotePlayerList = new RemoteObjectList(this, new PlayerUpdater());
+            remoteProjectileList = new RemoteObjectList(this, new ProjectileUpdater());
             SharedLists.Players = remotePlayerList.ObjectsData;
             SharedLists.Projectiles = remotePlayerList.ObjectsData;
 
@@ -162,7 +162,7 @@ namespace Client
         {
             
             var data = msg.ReadObjectData();
-            localPlayer = new Player(this, data.SessionID, data.ID, data.Index,  SharedLists.PlayerTextureNames[data.Index], data.Position, 0, 0.5f, new KeyboardControls(Keys.Up, Keys.Down, Keys.Left, Keys.Right, Keys.Space), data.BoundsCenterOffset);
+            localPlayer = new Player(this, data.SessionID, data.ID, data.Index,  SharedLists.PlayerTextureNames[data.Index], data.Position, 0, 0.5f, new KeyboardControls(Keys.Up, Keys.Down, Keys.Left, Keys.Right, Keys.Space), new Vector2(0,10));
             localPlayer.PlayerUpdated += (s, e) => SendLocalPlayerData();
             localPlayer.ProjectileFired += (s, e) =>
                                                {
@@ -173,20 +173,32 @@ namespace Client
         void UpdateOtherPlayer(NetIncomingMessage msg)
         {
             var playerData = msg.ReadObjectData();
-            remotePlayerList.Update(playerData);
+            if (remotePlayerList.Exists(playerData.ID))
+            {
+                remotePlayerList.UpdateData(playerData);
+            } else
+            {
+                remotePlayerList.Add(playerData, Content.Load<Texture2D>("Players/Avatars/" + SharedLists.PlayerTextureNames[playerData.Index]), new Vector2(0, 10));
+            }
         }
 
         void UpdateProjectile(NetIncomingMessage msg)
         {
             var projectileData = msg.ReadObjectData();
-            remoteProjectileList.Update(projectileData);
+            if (remoteProjectileList.Exists(projectileData.ID))
+            {
+                remoteProjectileList.UpdateData(projectileData);
+            } else
+            {
+                remoteProjectileList.Add(projectileData,Content.Load<Texture2D>("Players/Projectiles/" + SharedLists.ProjectileTextureNames[projectileData.Index]),Vector2.Zero);
+            }
         }
 
         void SendLocalPlayerData()
         {
             NetOutgoingMessage om = client.CreateMessage();
             om.Write("player_data");
-            om.Write(new TransferableObjectData(localPlayer.SessionID, localPlayer.ID, localPlayer.Index, localPlayer.Position, localPlayer.Angle, localPlayer.BoundsCenter));
+            om.Write(new TransferableObjectData(localPlayer.SessionID, localPlayer.ID, localPlayer.Index, localPlayer.Position, localPlayer.Angle));
             client.SendMessage(om, NetDeliveryMethod.Unreliable);
         }
 
@@ -196,7 +208,7 @@ namespace Client
             {
                 NetOutgoingMessage om = client.CreateMessage();
                 om.Write("projectile_data");
-                om.Write(new TransferableObjectData(localPlayer.SessionID, projectile.ID, localPlayer.Index,projectile.Position,projectile.Angle,projectile.BoundsCenter));
+                om.Write(new TransferableObjectData(localPlayer.SessionID, projectile.ID, localPlayer.Index,projectile.Position,projectile.Angle));
                 client.SendMessage(om, NetDeliveryMethod.Unreliable);
             }
         }

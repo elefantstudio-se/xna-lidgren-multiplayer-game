@@ -35,14 +35,14 @@ namespace Client
             }
         }
 
-        public ObjectData(TransferableObjectData remoteData, Texture2D texture)
+        public ObjectData(TransferableObjectData remoteData, Texture2D texture, Vector2 centerOffset)
         {
             Texture = texture;
             RemoteData = remoteData;
-            LocalData = new TransferableObjectData(remoteData.SessionID, remoteData.ID, remoteData.Index, remoteData.Position, remoteData.Angle, remoteData.BoundsCenterOffset);
+            LocalData = new TransferableObjectData(remoteData.SessionID, remoteData.ID, remoteData.Index, remoteData.Position, remoteData.Angle);
             TextureData = new Color[Texture.Width * Texture.Height];
             Texture.GetData(TextureData);
-            Origin = new Vector2(Texture.Width/2, Texture.Height/2) + remoteData.BoundsCenterOffset;
+            Origin = new Vector2(Texture.Width/2, Texture.Height/2) + centerOffset;
         }
     }
 }
