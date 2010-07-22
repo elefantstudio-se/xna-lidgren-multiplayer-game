@@ -40,5 +40,10 @@ namespace Client
         {
             return remote;
         }
+
+        public bool IsStillValid(Rectangle bounds)
+        {
+            return true;
+        }
     }
 }

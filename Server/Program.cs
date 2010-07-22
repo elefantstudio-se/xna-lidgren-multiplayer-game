@@ -104,7 +104,7 @@ namespace Server
         static void ReceivedProjectileData(NetIncomingMessage msg)
         {
             var data = msg.ReadObjectData();
-            projectiles[data.SessionID] = data;
+            projectiles[data.ID] = data;
         }
 
         static TransferableObjectData SendInitialData(NetConnection receiver)
@@ -145,6 +145,7 @@ namespace Server
                 }
             }
         }
+
         static void SendPlayersData()
         {
             foreach(NetConnection client in server.Connections)

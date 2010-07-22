@@ -17,5 +17,10 @@ namespace Client
         {
             return remote;
         }
+
+        public bool IsStillValid(Rectangle bounds)
+        {
+            return Game1.Screen.Intersects(bounds);
+        }
     }
 }

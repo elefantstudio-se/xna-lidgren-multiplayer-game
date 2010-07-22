@@ -123,26 +123,39 @@ namespace Client
                 Move(1);
                 playerUpdated = true;
             }
+
             if (InputKeys.Contains(Controls.Backward))
             {
                 Move(-1);
                 playerUpdated = true;
             }
+
             if (InputKeys.Contains(Controls.RotateLeft))
             {
                 Rotate(-MathHelper.ToRadians(rotationSpeed));
                 playerUpdated = true;
             }
+
             if (InputKeys.Contains(Controls.RotateRight))
             {
                 Rotate(MathHelper.ToRadians(rotationSpeed));
                 playerUpdated = true;
             }
+
             if (InputKeys.Contains(Controls.Shoot))
             {
                 Fire(gameTime);
             }
+
             Projectiles.ForEach(p => p.Update(gameTime));
+            for (int i = 0; i < Projectiles.Count; i++)
+            {
+                if (!Projectiles[i].IsActive)
+                {
+                    //Projectiles.Remove(Projectiles[i]);
+                }
+            }
+
             if (playerUpdated)
             {
                 PlayerUpdated(this, EventArgs.Empty);

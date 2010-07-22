@@ -21,6 +21,7 @@ namespace Client
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         public static Color BackgroundColor { get; set; }
+        public static Rectangle Screen { get; set; }
 
         private readonly int port = 8081;
         private readonly string host;
@@ -39,6 +40,7 @@ namespace Client
             this.port = port;
             this.host = host;
             graphics = new GraphicsDeviceManager(this) { PreferredBackBufferWidth = 640, PreferredBackBufferHeight = 480 };
+            Screen = new Rectangle(0, 0,graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
             Content.RootDirectory = "Content";
             NetPeerConfiguration config = new NetPeerConfiguration("xnaapp");
             config.EnableMessageType(NetIncomingMessageType.DiscoveryResponse);
@@ -190,6 +192,7 @@ namespace Client
                 remoteProjectileList.UpdateData(projectileData);
             } else
             {
+                Console.WriteLine("new bullet received");
                 remoteProjectileList.Add(projectileData,Content.Load<Texture2D>("Players/Projectiles/" + SharedLists.ProjectileTextureNames[projectileData.Index]),Vector2.Zero);
             }
         }

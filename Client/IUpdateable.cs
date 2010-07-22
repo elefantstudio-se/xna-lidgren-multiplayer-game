@@ -10,5 +10,6 @@ namespace Client
     {
         Vector2 UpdatePosition(Vector2 local, Vector2 remote);
         float UpdateAngle(float local, float remote);
+        bool IsStillValid(Rectangle bounds);
     }
 }

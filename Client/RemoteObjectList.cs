@@ -33,7 +33,17 @@ namespace Client
                 obj.LocalData.Position = updater.UpdatePosition(obj.LocalData.Position, obj.RemoteData.Position);
                 obj.LocalData.Angle = updater.UpdateAngle(obj.LocalData.Angle, obj.RemoteData.Angle);
             }
+
+            foreach (var key in ObjectsData.Keys.ToArray())
+            {
+                var obj = ObjectsData[key];
+                if (!updater.IsStillValid(obj.BoundingRectangle))
+                {
+                    ObjectsData.Remove(key);
+                }
+            }
         }
+
         public void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
@@ -52,6 +62,11 @@ namespace Client
         public bool Exists(int id)
         {
             return ObjectsData.ContainsKey(id);
+        }
+
+        public int Count()
+        {
+            return ObjectsData.Count;
         }
 
         public void Add(TransferableObjectData data, Texture2D texture, Vector2 centerOffset)
