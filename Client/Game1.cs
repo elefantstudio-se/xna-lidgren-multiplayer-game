@@ -146,6 +146,7 @@ namespace Client
                     case NetIncomingMessageType.DiscoveryResponse: client.Connect(msg.SenderEndpoint); break;
                     case NetIncomingMessageType.Data: ReadData(msg); break;
                 }
+            client.Recycle(msg);
             }
         }
 
@@ -212,7 +213,7 @@ namespace Client
                 NetOutgoingMessage om = client.CreateMessage();
                 om.Write("projectile_data");
                 om.Write(new TransferableObjectData(localPlayer.SessionID, projectile.ID, localPlayer.Index,projectile.Position,projectile.Angle));
-                client.SendMessage(om, NetDeliveryMethod.Unreliable);
+                client.SendMessage(om, NetDeliveryMethod.UnreliableSequenced);
             }
         }
     }

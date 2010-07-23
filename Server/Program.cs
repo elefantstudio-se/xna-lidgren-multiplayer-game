@@ -58,6 +58,7 @@ namespace Server
 
                         nextSendUpdates += (1.0/30.0);
                     }
+                    server.Recycle(msg);
                 }
                 Thread.Sleep(1);
             }
@@ -141,7 +142,7 @@ namespace Server
                     om.Write("projectile_data");
                     om.Write(projectile);
 
-                    server.SendMessage(om, client, NetDeliveryMethod.Unreliable);
+                    server.SendMessage(om, client, NetDeliveryMethod.UnreliableSequenced);
                 }
             }
         }
