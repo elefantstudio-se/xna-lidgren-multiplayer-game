@@ -10,20 +10,22 @@ using Shared;
 
 namespace Client
 {
-    class RemoteObjectList<T> where T:RemoteObject
+    class RemoteObjectList<T> where T:GameObject
     {
         public Dictionary<int, T> ObjectsData{ get; set;}
+        public Dictionary<int, TransferableObjectData> RemoteData{ get; set;}
 
         public RemoteObjectList()
         {
             ObjectsData = new Dictionary<int, T>();
+            RemoteData = new Dictionary<int, TransferableObjectData>();
         }
 
         public void Update(GameTime gameTime)
         {
             foreach (var obj in ObjectsData.Values)
             {
-                obj.Update(gameTime);
+                obj.Update(gameTime, RemoteData[obj.ID]);
             }
 
             /*foreach (var key in ObjectsData.Keys.ToArray())
@@ -46,7 +48,7 @@ namespace Client
         
         public void UpdateData(TransferableObjectData data)
         {
-            ObjectsData[data.ID].RemoteData = data;
+            RemoteData[data.ID] = data;
         }
 
         public bool Exists(int id)
@@ -62,6 +64,7 @@ namespace Client
         public void Add(T entity)
         {
             ObjectsData.Add(entity.ID, entity);
+            RemoteData.Add(entity.ID, null);
         }
     }
 }

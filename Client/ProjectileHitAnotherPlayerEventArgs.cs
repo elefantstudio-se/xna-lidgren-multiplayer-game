@@ -5,10 +5,10 @@ using System.Text;
 
 namespace Client
 {
-    class ProjectileHitAnotherPlayerEventArgs:EventArgs
+    class ProjectileHitPlayerEventArgs:EventArgs
     {
         public RemotePlayer OtherPlayer { get; set; }
-        public ProjectileHitAnotherPlayerEventArgs(RemotePlayer otherPlayer)
+        public ProjectileHitPlayerEventArgs(RemotePlayer otherPlayer)
         {
             OtherPlayer = otherPlayer;
         }

@@ -98,10 +98,11 @@
     <Compile Include="GameObject.cs" />
     <Compile Include="KeyboardControls.cs" />
     <Compile Include="Player.cs" />
+    <Compile Include="PlayerFactory.cs" />
     <Compile Include="Projectile.cs" />
+    <Compile Include="ProjectileFactory.cs" />
     <Compile Include="ProjectileFiredEventArgs.cs" />
     <Compile Include="ProjectileHitAnotherPlayerEventArgs.cs" />
-    <Compile Include="RemoteObject.cs" />
     <Compile Include="RemoteObjectList.cs" />
     <Compile Include="Projectile_old.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

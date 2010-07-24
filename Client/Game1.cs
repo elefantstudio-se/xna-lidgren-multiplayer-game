@@ -35,17 +35,15 @@ namespace Client
         private NetClient client;
         private RemoteObjectList<RemotePlayer> remotePlayerList;
         private RemoteObjectList<RemoteProjectile> remoteProjectileList;
+        private PlayerFactory playerFactory;
+        private ProjectileFactory projectileFactory;
         private Player localPlayer;
         private double nextSendUpdate = NetTime.Now;
         private double updateInterval = (1.0/1000.0);
         private PhysicsSimulator physicsSimulator;
         private float playerZOrder = 0.5f;
         private float playerMass = 5;
-        private float playerSpeed = 5;
-
-        private Texture2D boxTex;
-        private Body boxBody;
-        private Geom boxGeom;
+        private float playerSpeed = 25;
 
         public Game1(string host, int port)
         {
@@ -76,8 +74,12 @@ namespace Client
             BackgroundColor = Color.CornflowerBlue;
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Services.AddService(typeof(SpriteBatch), spriteBatch);
+
             remotePlayerList = new RemoteObjectList<RemotePlayer>();
             remoteProjectileList = new RemoteObjectList<RemoteProjectile>();
+
+            projectileFactory = new ProjectileFactory(this, physicsSimulator, playerZOrder, 5, 50, "Players/Projectiles/",SharedLists.ProjectileTextureNames);
+            playerFactory = new PlayerFactory(this, physicsSimulator, 0, playerMass, playerSpeed, "Players/Avatars/",SharedLists.PlayerTextureNames, projectileFactory);
 
             client.DiscoverKnownPeer(host, port);
             base.Initialize();
@@ -89,10 +91,6 @@ namespace Client
         /// </summary>
         protected override void LoadContent()
         {
-            boxTex = Content.Load<Texture2D>("box");
-            boxBody = BodyFactory.Instance.CreateRectangleBody(physicsSimulator, boxTex.Width, boxTex.Height, 1);
-            boxBody.Position = new Vector2(100);
-            boxGeom = GeomFactory.Instance.CreateRectangleGeom(physicsSimulator, boxBody, boxTex.Width, boxTex.Height);
         }
 
         /// <summary>
@@ -117,7 +115,7 @@ namespace Client
 
             if (localPlayer != null)
             {
-                localPlayer.Update(gameTime);
+                localPlayer.Update(gameTime, null);
             }
             remotePlayerList.Update(gameTime);
             remoteProjectileList.Update(gameTime);
@@ -151,7 +149,6 @@ namespace Client
             }
             remotePlayerList.Draw(gameTime);
             remoteProjectileList.Draw(gameTime);
-            spriteBatch.Draw(boxTex, boxBody.Position,null,Color.White,boxBody.Rotation, new Vector2(boxTex.Width/2, boxTex.Height/2),1, SpriteEffects.None,1);
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -185,12 +182,7 @@ namespace Client
         {
             
             var data = msg.ReadObjectData();
-            localPlayer = new Player(this, physicsSimulator, data.SessionID, data.ID, "Players/Avatars/" + SharedLists.PlayerTextureNames[data.Index],data.Position,0,playerZOrder,playerMass,playerSpeed,data.Index,new KeyboardControls(Keys.Up, Keys.Down, Keys.Left, Keys.Right, Keys.Space));
-            //localPlayer.PlayerUpdated += (s, e) => SendLocalPlayerData();
-            //localPlayer.ProjectileFired += (s, e) =>
-            //                                   {
-            //                                       Console.WriteLine("fire");
-            //                                   };
+            localPlayer = playerFactory.NewPlayer(data.SessionID, data.ID, data.Index, data.Position, data.Angle, new KeyboardControls(Keys.Up, Keys.Down, Keys.Left, Keys.Right, Keys.Space));
         }
 
         void UpdateOtherPlayer(NetIncomingMessage msg)
@@ -201,7 +193,7 @@ namespace Client
                 remotePlayerList.UpdateData(playerData);
             } else
             {
-                remotePlayerList.Add(new RemotePlayer(this,physicsSimulator, playerData.SessionID,playerData.ID,"Players/Avatars/" + SharedLists.PlayerTextureNames[playerData.Index],playerData.Position,playerData.Angle,playerZOrder,playerMass,playerSpeed,playerData));
+                remotePlayerList.Add(playerFactory.NewRemotePlayer(playerData.SessionID, playerData.ID, playerData.Index, playerData.Position, playerData.Angle));
             }
         }
 
@@ -213,7 +205,7 @@ namespace Client
                 remoteProjectileList.UpdateData(projectileData);
             } else
             {
-                remoteProjectileList.Add(new RemoteProjectile(this, physicsSimulator, projectileData.SessionID, projectileData.ID, "Players/Projectiles/" + SharedLists.ProjectileTextureNames[projectileData.Index], projectileData.Position, projectileData.Angle, 0, 2, 10, projectileData));
+                remoteProjectileList.Add(projectileFactory.NewRemoteProjectile(projectileData.SessionID, projectileData.ID, projectileData.Index, projectileData.Position, projectileData.Angle));
             }
         }
 
@@ -227,13 +219,13 @@ namespace Client
 
         void SendProjectilesData()
         {
-            //foreach (var projectile in localPlayer.Projectiles)
-            //{
-            //    NetOutgoingMessage om = client.CreateMessage();
-            //    om.Write("projectile_data");
-            //    om.Write(new TransferableObjectData(localPlayer.SessionID, projectile.ID, localPlayer.Index,projectile.Position,projectile.Angle));
-            //    client.SendMessage(om, NetDeliveryMethod.UnreliableSequenced);
-            //}
+            foreach (var projectile in localPlayer.Projectiles)
+            {
+                NetOutgoingMessage om = client.CreateMessage();
+                om.Write("projectile_data");
+                om.Write(new TransferableObjectData(localPlayer.SessionID, projectile.ID, localPlayer.Index, projectile.Position, projectile.Angle));
+                client.SendMessage(om, NetDeliveryMethod.UnreliableSequenced);
+            }
         }
     }
 }

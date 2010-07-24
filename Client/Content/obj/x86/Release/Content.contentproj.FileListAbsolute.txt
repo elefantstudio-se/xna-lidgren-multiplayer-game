@@ -1,1 +1,2 @@
 C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Client\Content\obj\x86\Release\ResolveAssemblyReference.cache
+C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFunFarseer\Client\Content\obj\x86\Release\ResolveAssemblyReference.cache

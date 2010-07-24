@@ -8,10 +8,17 @@ using Shared;
 
 namespace Client
 {
-    class RemoteProjectile:RemoteObject
+    class RemoteProjectile:GameObject
     {
-        public RemoteProjectile(Game game, PhysicsSimulator physicsSimulator, long sessionID, int id, string imageAssetPath, Vector2 initialPosition, float initialAngle, float zOrder, float mass, float speed, TransferableObjectData remoteData) : base(game, physicsSimulator, sessionID, id, imageAssetPath, initialPosition, initialAngle, zOrder, mass, speed, remoteData)
+        public RemoteProjectile(Game game, PhysicsSimulator physicsSimulator, long sessionID, int id, string imageAssetPath, Vector2 initialPosition, float initialAngle, float zOrder, float mass, float speed, CollisionCategory collisionCategories) : base(game, physicsSimulator, sessionID, id, imageAssetPath, initialPosition, initialAngle, zOrder, mass, speed, collisionCategories)
         {
+            Body.ApplyImpulse(Velocity * Speed);
+        }
+
+        public override void Update(GameTime gameTime, TransferableObjectData remoteData)
+        {
+            //Position = remoteData.Position;
+            base.Update(gameTime, remoteData);
         }
     }
 }

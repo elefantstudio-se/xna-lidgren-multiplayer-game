@@ -9,6 +9,7 @@ using FarseerGames.FarseerPhysics.Factories;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Shared;
 
 namespace Client
 {
@@ -51,14 +52,18 @@ namespace Client
         }
 
         private Texture2D Texture;
-        private Body Body;
-        private Geom Geometry;
+        protected Body Body;
+        protected Geom Geometry;
         private Vector2 Origin;
 
+        protected Game Game{ get; set;}
         protected SpriteBatch spriteBatch;
+        protected PhysicsSimulator PhysicsSimulator { get; set; }
 
-        protected GameObject(Game game, PhysicsSimulator physicsSimulator, long sessionID, int id, string imageAssetPath, Vector2 initialPosition, float initialAngle, float zOrder, float mass, float speed)
+        protected GameObject(Game game, PhysicsSimulator physicsSimulator, long sessionID, int id, string imageAssetPath, Vector2 initialPosition, float initialAngle, float zOrder, float mass, float speed, CollisionCategory collisionCategories)
         {
+            Game = game;
+            PhysicsSimulator = physicsSimulator;
             SessionID = sessionID;
             ID = id;
             spriteBatch = (SpriteBatch) game.Services.GetService(typeof (SpriteBatch));
@@ -74,6 +79,8 @@ namespace Client
             Body.Position = initialPosition;
             Body.Rotation = initialAngle;
             Geometry = GeomFactory.Instance.CreatePolygonGeom(physicsSimulator, Body, vertices, 0);
+            Geometry.CollisionCategories = collisionCategories;
+            Geometry.CollidesWith = CollidesWith(collisionCategories);
         }
 
         public virtual void Draw(GameTime gameTime)
@@ -81,13 +88,30 @@ namespace Client
             spriteBatch.Draw(Texture, Body.Position, null, Color.White, Body.Rotation, Origin, 1, SpriteEffects.None, ZOrder);
         }
 
-        public virtual void Update(GameTime gameTime) { }
+        public virtual void Update(GameTime gameTime, TransferableObjectData remoteData) { }
 
         protected Keys[] InputKeys
         {
             get
             {
                 return Keyboard.GetState().GetPressedKeys();
+            }
+        }
+
+        static CollisionCategory CollidesWith(CollisionCategory categories)
+        {
+            ///Categories:
+            /// 1: Local Player
+            /// 2: Remote Players
+            /// 3: Local Projecties
+            /// 4: Remote Projectiles
+            switch (categories)
+            {
+                case CollisionCategory.Cat1: return CollisionCategory.All & ~CollisionCategory.Cat3;
+                case CollisionCategory.Cat2: return CollisionCategory.All & ~CollisionCategory.Cat4;
+                case CollisionCategory.Cat3: return CollisionCategory.All & ~CollisionCategory.Cat1;
+                case CollisionCategory.Cat4: return CollisionCategory.All & ~CollisionCategory.Cat2;
+                default: return CollisionCategory.All;
             }
         }
     }
