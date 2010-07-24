@@ -2,131 +2,52 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FarseerGames.FarseerPhysics;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Client
 {
-    class Player: GameObject
+    class Player:GameObject
     {
+        public enum MoveDirection
+        {
+            Forward = 1,
+            Backward = -1
+        }
         public short Index { get; set; }
-
-        KeyboardControls Controls { get; set; }
-        private int speed = 10;
-        private int rotationSpeed = 5;
-        public List<Projectile> Projectiles{ get; set;}
-        private double lastShotFired;
-        private double fireInterval = 300;
         public event EventHandler PlayerUpdated = delegate { };
-        public event EventHandler<ProjectileFiredEventArgs> ProjectileFired = delegate { };
-        public event EventHandler<BumpedAnotherPlayerEventArgs> BumpedAnotherPlayer = delegate { };
 
-        public Player(Game game, long sessionId, int id, short index, string imageAsset, Vector2 position, float angle, float zOrder, KeyboardControls controls, Vector2 boundsCenterOffset) : base(game, sessionId, id, imageAsset, position, angle, zOrder, boundsCenterOffset)
+        private KeyboardControls Controls { get; set; }
+        private int rotationSpeed = 5;
+
+        public Player(Game game, PhysicsSimulator physicsSimulator, long sessionID, int id, string imageAssetPath, Vector2 initialPosition, float initialAngle, float zOrder, float mass, float speed, short index, KeyboardControls controls) : base(game, physicsSimulator, sessionID, id, imageAssetPath, initialPosition, initialAngle, zOrder, mass, speed)
         {
             Index = index;
             Controls = controls;
-            Projectiles = new List<Projectile>();
         }
 
-        public void Move(int direction)
+        public void Move(MoveDirection direction)
         {
-            var tempNewPosition = Position;
-            tempNewPosition += GetTranslatedTransform(direction, speed);
-            /*if (tempNewPosition.X < 0)
-            {
-                tempNewPosition.X = ScreenBounds.Width + tempNewPosition.X;
-            }
-            if (tempNewPosition.Y < 0)
-            {
-                tempNewPosition.Y = ScreenBounds.Height + tempNewPosition.Y;
-            }
-            tempNewPosition.X = tempNewPosition.X % ScreenBounds.Width;
-            tempNewPosition.Y = tempNewPosition.Y % ScreenBounds.Height;
-            */
-            var hitAfterMovement = PerformCollisionDetection(GetTransform(tempNewPosition));
-            if (hitAfterMovement == null) //we didn't bump anyone
-            {
-                Position = tempNewPosition;
-            } 
-            //Position = tempNewPosition;
-
-            /*Position += GetTranslatedTransform(direction, speed);
-            if (Position.X < 0)
-            {
-                Position.X = ScreenBounds.Width + Position.X;
-            }
-            if (Position.Y < 0)
-            {
-                Position.Y = ScreenBounds.Height + Position.Y;
-            }
-            Position.X = Position.X % ScreenBounds.Width;
-            Position.Y = Position.Y % ScreenBounds.Height;
-
-            PerformCollisionDetection();*/
+            Position += Velocity * (int)direction;
         }
 
         public void Rotate(float angle)
         {
             Angle += angle;
-            var collidedPlayer = PerformCollisionDetection(GetTransform(Position));
-            if (collidedPlayer != null)
-            {
-                Angle -= angle;
-            }
-        }
-
-        ObjectData PerformCollisionDetection(Matrix transformation)
-        {
-            var boundRectangle = GetBoundingRectangle(transformation);
-            ObjectData collidedPlayer = null;
-            foreach (var player in SharedLists.Players.Values)
-            {
-                if (boundRectangle.Intersects(player.BoundingRectangle))
-                {
-                    if (CollisionHelpers.IntersectPixels(transformation, Width, Height, TextureData, player.Transform, player.Texture.Width, player.Texture.Height, player.TextureData))
-                    {
-                        collidedPlayer = player;
-                        break;
-                    }
-                }
-            }
-            if (collidedPlayer == null)
-            {
-                return null;
-            }
-            //We have hit someone
-            BumpedAnotherPlayer(this,new BumpedAnotherPlayerEventArgs(collidedPlayer));
-            return collidedPlayer;
-        }
-
-        public override string ImagePath
-        {
-            get
-            {
-                return "Players/Avatars/";
-            }
-        }
-
-        public override void Draw(GameTime gameTime)
-        {
-            base.Draw(gameTime);
-            Projectiles.ForEach(p => p.Draw(gameTime));
         }
 
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
             bool playerUpdated = false;
             if (InputKeys.Contains(Controls.Forward))
             {
-                Move(1);
+                Move(MoveDirection.Forward);
                 playerUpdated = true;
             }
 
             if (InputKeys.Contains(Controls.Backward))
             {
-                Move(-1);
+                Move(MoveDirection.Backward);
                 playerUpdated = true;
             }
 
@@ -142,7 +63,7 @@ namespace Client
                 playerUpdated = true;
             }
 
-            if (InputKeys.Contains(Controls.Shoot))
+            /*if (InputKeys.Contains(Controls.Shoot))
             {
                 Fire(gameTime);
             }
@@ -154,31 +75,13 @@ namespace Client
                 {
                     //Projectiles.Remove(Projectiles[i]);
                 }
-            }
+            }*/
 
             if (playerUpdated)
             {
                 PlayerUpdated(this, EventArgs.Empty);
             }
-        }
-
-        bool Fire(GameTime gameTime)
-        {
-            if (gameTime.TotalGameTime.TotalMilliseconds - lastShotFired < fireInterval)
-            {
-                return false;
-            }
-            lastShotFired = gameTime.TotalGameTime.TotalMilliseconds;
-            var newProjectile = new Projectile(game, SessionID, SharedLists.ProjectileTextureNames[Index], Position, Angle, 0.5f, 10, Vector2.Zero);
-            newProjectile.Hit += (s, e) => { };
-            //newProjectile.OutOfScreen += (s, e) =>
-            //                                 {
-            //                                     Projectiles.Remove(newProjectile);
-            //                                     Console.WriteLine("removed");
-            //                                 };
-            Projectiles.Add(newProjectile);
-            ProjectileFired(this, new ProjectileFiredEventArgs(newProjectile));
-            return true;
+            base.Update(gameTime);
         }
     }
 }

@@ -7,8 +7,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Client\bin\x86\Debug\Content\Players\Avatars\p1.xnb</Output>
-      <Time>2010-07-21T03:45:48.6996699+02:00</Time>
+      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFunFarseer\Client\bin\x86\Debug\Content\Players\Avatars\p1.xnb</Output>
+      <Time>2010-07-23T02:17:07.8133199+02:00</Time>
     </Item>
     <Item>
       <Source>Players\Avatars\p2.png</Source>
@@ -16,8 +16,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Client\bin\x86\Debug\Content\Players\Avatars\p2.xnb</Output>
-      <Time>2010-07-21T03:46:34.8503096+02:00</Time>
+      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFunFarseer\Client\bin\x86\Debug\Content\Players\Avatars\p2.xnb</Output>
+      <Time>2010-07-23T02:17:07.8563224+02:00</Time>
     </Item>
     <Item>
       <Source>Players\Avatars\p3.png</Source>
@@ -25,8 +25,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Client\bin\x86\Debug\Content\Players\Avatars\p3.xnb</Output>
-      <Time>2010-07-21T03:48:31.8760031+02:00</Time>
+      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFunFarseer\Client\bin\x86\Debug\Content\Players\Avatars\p3.xnb</Output>
+      <Time>2010-07-23T02:17:07.8873242+02:00</Time>
     </Item>
     <Item>
       <Source>Players\Avatars\p4.png</Source>
@@ -34,8 +34,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Client\bin\x86\Debug\Content\Players\Avatars\p4.xnb</Output>
-      <Time>2010-07-21T03:48:54.3542888+02:00</Time>
+      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFunFarseer\Client\bin\x86\Debug\Content\Players\Avatars\p4.xnb</Output>
+      <Time>2010-07-23T02:17:07.902325+02:00</Time>
     </Item>
     <Item>
       <Source>Players\Projectiles\p1.png</Source>
@@ -43,8 +43,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Client\bin\x86\Debug\Content\Players\Projectiles\p1.xnb</Output>
-      <Time>2010-07-22T16:39:35.6353287+02:00</Time>
+      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFunFarseer\Client\bin\x86\Debug\Content\Players\Projectiles\p1.xnb</Output>
+      <Time>2010-07-23T02:17:07.9323267+02:00</Time>
     </Item>
     <Item>
       <Source>Players\Projectiles\p2.png</Source>
@@ -52,8 +52,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Client\bin\x86\Debug\Content\Players\Projectiles\p2.xnb</Output>
-      <Time>2010-07-22T16:40:03.28091+02:00</Time>
+      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFunFarseer\Client\bin\x86\Debug\Content\Players\Projectiles\p2.xnb</Output>
+      <Time>2010-07-23T02:17:07.9813296+02:00</Time>
     </Item>
     <Item>
       <Source>Players\Projectiles\p3.png</Source>
@@ -61,8 +61,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Client\bin\x86\Debug\Content\Players\Projectiles\p3.xnb</Output>
-      <Time>2010-07-22T16:42:12.344292+02:00</Time>
+      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFunFarseer\Client\bin\x86\Debug\Content\Players\Projectiles\p3.xnb</Output>
+      <Time>2010-07-23T02:17:08.0173316+02:00</Time>
     </Item>
     <Item>
       <Source>Players\Projectiles\p4.png</Source>
@@ -70,18 +70,27 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Client\bin\x86\Debug\Content\Players\Projectiles\p4.xnb</Output>
-      <Time>2010-07-22T16:42:33.4394985+02:00</Time>
+      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFunFarseer\Client\bin\x86\Debug\Content\Players\Projectiles\p4.xnb</Output>
+      <Time>2010-07-23T02:17:08.0663344+02:00</Time>
+    </Item>
+    <Item>
+      <Source>box.png</Source>
+      <Name>box</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFunFarseer\Client\bin\x86\Debug\Content\box.xnb</Output>
+      <Time>2010-07-24T03:54:46.9452404+02:00</Time>
     </Item>
     <BuildSuccessful>true</BuildSuccessful>
     <Settings>
       <TargetPlatform>Windows</TargetPlatform>
       <BuildConfiguration>Debug</BuildConfiguration>
       <CompressContent>false</CompressContent>
-      <RootDirectory>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Client\Content\</RootDirectory>
-      <LoggerRootDirectory>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Client\</LoggerRootDirectory>
-      <IntermediateDirectory>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Client\Content\obj\x86\Debug\</IntermediateDirectory>
-      <OutputDirectory>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFun\Client\bin\x86\Debug\Content\</OutputDirectory>
+      <RootDirectory>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFunFarseer\Client\Content\</RootDirectory>
+      <LoggerRootDirectory>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFunFarseer\Client\</LoggerRootDirectory>
+      <IntermediateDirectory>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFunFarseer\Client\Content\obj\x86\Debug\</IntermediateDirectory>
+      <OutputDirectory>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFunFarseer\Client\bin\x86\Debug\Content\</OutputDirectory>
     </Settings>
     <Assemblies>
       <Assembly>
