@@ -180,7 +180,6 @@ namespace Client
 
         void NewServerConnection(NetIncomingMessage msg)
         {
-            
             var data = msg.ReadObjectData();
             localPlayer = playerFactory.NewPlayer(data.SessionID, data.ID, data.Index, data.Position, data.Angle, new KeyboardControls(Keys.Up, Keys.Down, Keys.Left, Keys.Right, Keys.Space));
         }
@@ -213,18 +212,23 @@ namespace Client
         {
             NetOutgoingMessage om = client.CreateMessage();
             om.Write("player_data");
-            om.Write(new TransferableObjectData(localPlayer.SessionID, localPlayer.ID, localPlayer.Index, localPlayer.Position, localPlayer.Angle));
+            om.Write(new TransferableObjectData(localPlayer.SessionID, localPlayer.ID, localPlayer.Index, localPlayer.Position, localPlayer.Angle, localPlayer.IsValid));
             client.SendMessage(om, NetDeliveryMethod.Unreliable);
         }
 
         void SendProjectilesData()
         {
-            foreach (var projectile in localPlayer.Projectiles)
+            for (int i = localPlayer.Projectiles.Count; i > 0; i--)
             {
+                var projectile = localPlayer.Projectiles.ElementAt(i - 1);
                 NetOutgoingMessage om = client.CreateMessage();
                 om.Write("projectile_data");
-                om.Write(new TransferableObjectData(localPlayer.SessionID, projectile.ID, localPlayer.Index, projectile.Position, projectile.Angle));
+                om.Write(new TransferableObjectData(localPlayer.SessionID, projectile.ID, localPlayer.Index, projectile.Position, projectile.Angle, projectile.IsValid));
                 client.SendMessage(om, NetDeliveryMethod.UnreliableSequenced);
+                if (!projectile.IsValid)
+                {
+                    localPlayer.RemoteProjectile(projectile);
+                }
             }
         }
     }

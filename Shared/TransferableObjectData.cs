@@ -13,14 +13,16 @@ namespace Shared
         public short Index { get; set; }
         public Vector2 Position { get; set; }
         public float Angle { get; set; }
+        public bool IsValid { get; set; }
 
-        public TransferableObjectData(long sessionId, int id, short index, Vector2 position, float angle)
+        public TransferableObjectData(long sessionId, int id, short index, Vector2 position, float angle, bool isValid)
         {
             SessionID = sessionId;
             ID = id;
             Index = index;
             Position = position;
             Angle = angle;
+            IsValid = isValid;
         }
     }
 }

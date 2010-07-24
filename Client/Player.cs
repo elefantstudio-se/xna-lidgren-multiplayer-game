@@ -80,20 +80,12 @@ namespace Client
             }
 
             Projectiles.ForEach(p => p.Update(gameTime, null));
-            /*
-            for (int i = 0; i < Projectiles.Count; i++)
-            {
-                if (!Projectiles[i].IsActive)
-                {
-                    //Projectiles.Remove(Projectiles[i]);
-                }
-            }*/
             base.Update(gameTime, null);
         }
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
-            Projectiles.ForEach(p => p.Draw(gameTime));
+            Projectiles.ForEach(p => { Console.WriteLine(DateTime.Now.Millisecond + ": drawing"); p.Draw(gameTime); });
         }
 
         bool Fire(GameTime gameTime)
@@ -107,6 +99,11 @@ namespace Client
             Projectile newProjectile = projectileFactory.NewProjectile(SessionID, Helpers.GetNewID(), Index, Position, Angle);
             Projectiles.Add(newProjectile);
             return true;
+        }
+
+        public void RemoteProjectile(Projectile projectile)
+        {
+            Projectiles.Remove(projectile);
         }
     }
 }

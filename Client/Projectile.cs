@@ -11,6 +11,7 @@ namespace Client
     class Projectile:GameObject
     {
         public event EventHandler<ProjectileHitPlayerEventArgs> PlayerHit = delegate { };
+
         public Projectile(Game game, PhysicsSimulator physicsSimulator, long sessionID, int id, string imageAssetPath, Vector2 initialPosition, float initialAngle, float zOrder, float mass, float speed, CollisionCategory collisionCategories) : base(game, physicsSimulator, sessionID, id, imageAssetPath, initialPosition, initialAngle, zOrder, mass, speed, collisionCategories)
         {
             Geometry.OnCollision += OnCollision;
@@ -24,6 +25,10 @@ namespace Client
         }
         public override void Update(GameTime gameTime, Shared.TransferableObjectData remoteData)
         {
+            if (!IsInScreen)
+            {
+                IsValid = false;
+            }
             base.Update(gameTime, remoteData);
             //Position += Velocity;
         }

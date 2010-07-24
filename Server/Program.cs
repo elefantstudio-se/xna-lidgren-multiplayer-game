@@ -56,6 +56,14 @@ namespace Server
                     {
                         SendProjectilesData();
 
+                        for (int i = projectiles.Count; i > 0; i--)
+                        {
+                            var currentProjectile = projectiles.Values.ElementAt(i - 1);
+                            if (!currentProjectile.IsValid)
+                            {
+                                projectiles.Remove(currentProjectile.ID);
+                            }
+                        }
                         nextSendUpdates += (1.0/30.0);
                     }
                     server.Recycle(msg);
@@ -106,13 +114,14 @@ namespace Server
         {
             var data = msg.ReadObjectData();
             projectiles[data.ID] = data;
+           
         }
 
         static TransferableObjectData SendInitialData(NetConnection receiver)
         {
             short playerIndex = nextPlayerIndex++;
             Vector2 initialPosition = new Vector2(randomizer.Next(screenWidth), randomizer.Next(screenHeight));
-            var data = new TransferableObjectData(receiver.RemoteUniqueIdentifier, Helpers.GetNewID(), playerIndex, initialPosition, 0f);
+            var data = new TransferableObjectData(receiver.RemoteUniqueIdentifier, Helpers.GetNewID(), playerIndex, initialPosition, 0f, true);
             NetOutgoingMessage om = server.CreateMessage();
             om.Write("new_connection");
             om.Write(data);

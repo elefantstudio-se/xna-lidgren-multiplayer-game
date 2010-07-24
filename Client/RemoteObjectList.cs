@@ -28,14 +28,16 @@ namespace Client
                 obj.Update(gameTime, RemoteData[obj.ID]);
             }
 
-            /*foreach (var key in ObjectsData.Keys.ToArray())
+            foreach (var key in ObjectsData.Keys.ToArray())
             {
                 var obj = ObjectsData[key];
-                if (!updater.IsStillValid(obj.BoundingRectangle))
+                if (!obj.IsValid)
                 {
-                    ObjectsData.Remove(key);
+                    obj.Dispose();
+                    ObjectsData.Remove(obj.ID);
+                    RemoteData.Remove(obj.ID);
                 }
-            }*/
+            }
         }
 
         public void Draw(GameTime gameTime)
@@ -48,7 +50,16 @@ namespace Client
         
         public void UpdateData(TransferableObjectData data)
         {
-            RemoteData[data.ID] = data;
+            if (!data.IsValid)
+            {
+                ObjectsData.Remove(data.ID);
+                RemoteData.Remove(data.ID);
+                return;
+            }
+            if (ObjectsData.ContainsKey(data.ID))
+            {
+                RemoteData[data.ID] = data;
+            }
         }
 
         public bool Exists(int id)
@@ -65,6 +76,12 @@ namespace Client
         {
             ObjectsData.Add(entity.ID, entity);
             RemoteData.Add(entity.ID, null);
+        }
+
+        public void Remove(int id)
+        {
+            ObjectsData.Remove(id);
+            RemoteData.Remove(id);
         }
     }
 }

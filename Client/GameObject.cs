@@ -50,15 +50,33 @@ namespace Client
                 Body.Rotation = value;
             }
         }
+        public bool IsValid { get; set; }
 
         private Texture2D Texture;
         protected Body Body;
         protected Geom Geometry;
         private Vector2 Origin;
 
+        private Rectangle screenBounds;
         protected Game Game{ get; set;}
         protected SpriteBatch spriteBatch;
         protected PhysicsSimulator PhysicsSimulator { get; set; }
+
+
+        protected Rectangle RelativeBounds
+        {
+            get
+            {
+                return new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
+            }
+        }
+        protected bool IsInScreen
+        {
+            get
+            {
+                return screenBounds.Intersects(RelativeBounds);
+            }
+        }
 
         protected GameObject(Game game, PhysicsSimulator physicsSimulator, long sessionID, int id, string imageAssetPath, Vector2 initialPosition, float initialAngle, float zOrder, float mass, float speed, CollisionCategory collisionCategories)
         {
@@ -69,6 +87,7 @@ namespace Client
             spriteBatch = (SpriteBatch) game.Services.GetService(typeof (SpriteBatch));
             ZOrder = zOrder;
             Speed = speed;
+            IsValid = true;
 
             Texture = game.Content.Load<Texture2D>(imageAssetPath);
             uint[] colorData = new uint[Texture.Width * Texture.Height];
@@ -81,6 +100,7 @@ namespace Client
             Geometry = GeomFactory.Instance.CreatePolygonGeom(physicsSimulator, Body, vertices, 0);
             Geometry.CollisionCategories = collisionCategories;
             Geometry.CollidesWith = CollidesWith(collisionCategories);
+            screenBounds = game.GraphicsDevice.ScissorRectangle;
         }
 
         public virtual void Draw(GameTime gameTime)
@@ -89,6 +109,12 @@ namespace Client
         }
 
         public virtual void Update(GameTime gameTime, TransferableObjectData remoteData) { }
+
+        public void Dispose()
+        {
+            Body.Dispose();
+            Geometry.Dispose();
+        }
 
         protected Keys[] InputKeys
         {

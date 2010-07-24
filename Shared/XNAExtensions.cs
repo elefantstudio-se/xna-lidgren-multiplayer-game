@@ -299,6 +299,7 @@ public static class XNAExtensions
         message.Write(playerData.Index);
         message.Write(playerData.Position);
         message.Write(playerData.Angle);
+        message.Write(playerData.IsValid);
     }
 
     public static TransferableObjectData ReadObjectData(this NetIncomingMessage message)
@@ -308,7 +309,8 @@ public static class XNAExtensions
         short index = message.ReadInt16();
         Vector2 position = message.ReadVector2();
         float angle = message.ReadFloat();
-        return new TransferableObjectData(sessionId, id, index, position, angle);
+        bool isValid = message.ReadBoolean();
+        return new TransferableObjectData(sessionId, id, index, position, angle, isValid);
     }
 
     public static void WriteNewPlayerCoordinates(this NetOutgoingMessage message, long id, Vector2 position)
