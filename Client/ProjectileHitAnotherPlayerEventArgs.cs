@@ -7,8 +7,8 @@ namespace Client
 {
     class ProjectileHitAnotherPlayerEventArgs:EventArgs
     {
-        public ObjectData OtherPlayer { get; set; }
-        public ProjectileHitAnotherPlayerEventArgs(ObjectData otherPlayer)
+        public RemotePlayer OtherPlayer { get; set; }
+        public ProjectileHitAnotherPlayerEventArgs(RemotePlayer otherPlayer)
         {
             OtherPlayer = otherPlayer;
         }

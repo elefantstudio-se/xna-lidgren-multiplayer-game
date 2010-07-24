@@ -33,19 +33,19 @@ namespace Client
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private NetClient client;
-        private RemoteObjectList remotePlayerList;
-        private RemoteObjectList remoteProjectileList;
+        private RemoteObjectList<RemotePlayer> remotePlayerList;
+        private RemoteObjectList<RemoteProjectile> remoteProjectileList;
         private Player localPlayer;
         private double nextSendUpdate = NetTime.Now;
         private double updateInterval = (1.0/1000.0);
         private PhysicsSimulator physicsSimulator;
+        private float playerZOrder = 0.5f;
         private float playerMass = 5;
         private float playerSpeed = 5;
 
         private Texture2D boxTex;
         private Body boxBody;
         private Geom boxGeom;
-        private Vector2 boxOrigin;
 
         public Game1(string host, int port)
         {
@@ -76,10 +76,8 @@ namespace Client
             BackgroundColor = Color.CornflowerBlue;
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Services.AddService(typeof(SpriteBatch), spriteBatch);
-            remotePlayerList = new RemoteObjectList(this, physicsSimulator, new PlayerUpdater());
-            remoteProjectileList = new RemoteObjectList(this, physicsSimulator, new ProjectileUpdater());
-            SharedLists.Players = remotePlayerList.ObjectsData;
-            SharedLists.Projectiles = remotePlayerList.ObjectsData;       
+            remotePlayerList = new RemoteObjectList<RemotePlayer>();
+            remoteProjectileList = new RemoteObjectList<RemoteProjectile>();
 
             client.DiscoverKnownPeer(host, port);
             base.Initialize();
@@ -187,7 +185,7 @@ namespace Client
         {
             
             var data = msg.ReadObjectData();
-            localPlayer = new Player(this, physicsSimulator, data.SessionID, data.ID, "Players/Avatars/" + SharedLists.PlayerTextureNames[data.Index],data.Position,0,0.5f,playerMass,playerSpeed,data.Index,new KeyboardControls(Keys.Up, Keys.Down, Keys.Left, Keys.Right, Keys.Space));
+            localPlayer = new Player(this, physicsSimulator, data.SessionID, data.ID, "Players/Avatars/" + SharedLists.PlayerTextureNames[data.Index],data.Position,0,playerZOrder,playerMass,playerSpeed,data.Index,new KeyboardControls(Keys.Up, Keys.Down, Keys.Left, Keys.Right, Keys.Space));
             //localPlayer.PlayerUpdated += (s, e) => SendLocalPlayerData();
             //localPlayer.ProjectileFired += (s, e) =>
             //                                   {
@@ -203,8 +201,7 @@ namespace Client
                 remotePlayerList.UpdateData(playerData);
             } else
             {
-                //remotePlayerList.Add(playerData, Content.Load<Texture2D>("Players/Avatars/" + SharedLists.PlayerTextureNames[playerData.Index]), new Vector2(0, 10));
-                remotePlayerList.Add(playerData, Content.Load<Texture2D>("Players/Avatars/" + SharedLists.PlayerTextureNames[playerData.Index]), new Vector2(0, 10), playerMass);
+                remotePlayerList.Add(new RemotePlayer(this,physicsSimulator, playerData.SessionID,playerData.ID,"Players/Avatars/" + SharedLists.PlayerTextureNames[playerData.Index],playerData.Position,playerData.Angle,playerZOrder,playerMass,playerSpeed,playerData));
             }
         }
 
@@ -216,9 +213,7 @@ namespace Client
                 remoteProjectileList.UpdateData(projectileData);
             } else
             {
-                Console.WriteLine("new bullet received");
-                //remoteProjectileList.Add(projectileData,Content.Load<Texture2D>("Players/Projectiles/" + SharedLists.ProjectileTextureNames[projectileData.Index]),Vector2.Zero);
-                remoteProjectileList.Add(projectileData,Content.Load<Texture2D>("Players/Projectiles/" + SharedLists.ProjectileTextureNames[projectileData.Index]),Vector2.Zero, 2);
+                remoteProjectileList.Add(new RemoteProjectile(this, physicsSimulator, projectileData.SessionID, projectileData.ID, "Players/Projectiles/" + SharedLists.ProjectileTextureNames[projectileData.Index], projectileData.Position, projectileData.Angle, 0, 2, 10, projectileData));
             }
         }
 

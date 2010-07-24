@@ -2,18 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FarseerGames.FarseerPhysics;
 using Microsoft.Xna.Framework;
+using Shared;
 
 namespace Client
 {
-    class PlayerUpdater : IUpdateable
+    class RemotePlayer:RemoteObject
     {
         private const short CorrectionThreshold = 3;
         private const float InterpolationConstant = 0.2f;
 
-        public Vector2 UpdatePosition(Vector2 local, Vector2 remote)
+        public RemotePlayer(Game game, PhysicsSimulator physicsSimulator, long sessionID, int id, string imageAssetPath, Vector2 initialPosition, float initialAngle, float zOrder, float mass, float speed, TransferableObjectData remoteData) : base(game, physicsSimulator, sessionID, id, imageAssetPath, initialPosition, initialAngle, zOrder, mass, speed, remoteData)
         {
-            var difference = remote - local;
+        }
+
+        public override void Update(GameTime gametime)
+        {
+            Position = UpdatePosition();
+            Angle = RemoteData.Angle;
+        }
+
+        Vector2 UpdatePosition()
+        {
+            var difference = RemoteData.Position - Position;
             float newX = difference.X * InterpolationConstant, newY = difference.Y * InterpolationConstant;
             if (difference.X > 0 && difference.X < CorrectionThreshold)
             {
@@ -33,17 +45,7 @@ namespace Client
                     newY = difference.Y;
                 }
             }
-            return local + new Vector2(newX, newY);
-        }
-
-        public float UpdateAngle(float local, float remote)
-        {
-            return remote;
-        }
-
-        public bool IsStillValid(Rectangle bounds)
-        {
-            return true;
+            return Position + new Vector2(newX, newY);
         }
     }
 }

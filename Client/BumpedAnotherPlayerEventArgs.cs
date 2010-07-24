@@ -7,9 +7,9 @@ namespace Client
 {
     class BumpedAnotherPlayerEventArgs : EventArgs
     {
-        public ObjectData OtherPlayer { get; set; }
+        public RemotePlayer OtherPlayer { get; set; }
 
-        public BumpedAnotherPlayerEventArgs(ObjectData otherPlayer)
+        public BumpedAnotherPlayerEventArgs(RemotePlayer otherPlayer)
         {
             OtherPlayer = otherPlayer;
         }

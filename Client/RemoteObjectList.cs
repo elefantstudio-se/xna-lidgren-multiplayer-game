@@ -10,31 +10,20 @@ using Shared;
 
 namespace Client
 {
-    class RemoteObjectList
+    class RemoteObjectList<T> where T:RemoteObject
     {
-        public Dictionary<int, ObjectData> ObjectsData{ get; set;}
+        public Dictionary<int, T> ObjectsData{ get; set;}
 
-        private readonly Game game;
-        private readonly SpriteBatch spriteBatch;
-        private PhysicsSimulator physicsSimulator;
-        private IUpdateable updater;
-
-
-        public RemoteObjectList(Game game, PhysicsSimulator physicsSimulator, IUpdateable updater)
+        public RemoteObjectList()
         {
-            this.game = game;
-            this.physicsSimulator = physicsSimulator;
-            this.updater = updater;
-            spriteBatch = (SpriteBatch) game.Services.GetService(typeof (SpriteBatch));
-            ObjectsData = new Dictionary<int, ObjectData>();
+            ObjectsData = new Dictionary<int, T>();
         }
 
         public void Update(GameTime gameTime)
         {
             foreach (var obj in ObjectsData.Values)
             {
-                obj.Position = updater.UpdatePosition(obj.Position, obj.RemoteData.Position);
-                obj.Angle = updater.UpdateAngle(obj.Angle, obj.RemoteData.Angle);
+                obj.Update(gameTime);
             }
 
             /*foreach (var key in ObjectsData.Keys.ToArray())
@@ -51,7 +40,7 @@ namespace Client
         {
             foreach (var obj in ObjectsData.Values)
             {
-                spriteBatch.Draw(obj.Texture, obj.Position, null, Color.White, obj.Angle, obj.Origin, 1f, SpriteEffects.None, 0.5f);
+                obj.Draw(gameTime);
             }
         }
         
@@ -70,9 +59,9 @@ namespace Client
             return ObjectsData.Count;
         }
 
-        public void Add(TransferableObjectData data, Texture2D texture, Vector2 centerOffset, float mass)
+        public void Add(T entity)
         {
-            ObjectsData.Add(data.ID, new ObjectData(data,physicsSimulator,texture,centerOffset,mass));
+            ObjectsData.Add(entity.ID, entity);
         }
     }
 }

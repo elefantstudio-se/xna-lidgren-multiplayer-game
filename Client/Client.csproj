@@ -96,20 +96,19 @@
     <Compile Include="CollisionHelpers.cs" />
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="GameObject.cs" />
-    <Compile Include="IUpdateable.cs" />
     <Compile Include="KeyboardControls.cs" />
-    <Compile Include="ObjectData.cs" />
     <Compile Include="Player.cs" />
-    <Compile Include="PlayerUpdater.cs" />
     <Compile Include="Projectile.cs" />
     <Compile Include="ProjectileFiredEventArgs.cs" />
     <Compile Include="ProjectileHitAnotherPlayerEventArgs.cs" />
-    <Compile Include="ProjectileUpdater.cs" />
+    <Compile Include="RemoteObject.cs" />
     <Compile Include="RemoteObjectList.cs" />
     <Compile Include="Projectile_old.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="RemotePlayer.cs" />
+    <Compile Include="RemoteProjectile.cs" />
     <Compile Include="SharedLists.cs" />
   </ItemGroup>
   <ItemGroup>
