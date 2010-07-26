@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Client.Projectiles;
 using FarseerGames.FarseerPhysics;
 using FarseerGames.FarseerPhysics.Collisions;
 using Microsoft.Xna.Framework;
 using Shared;
 
-namespace Client
+namespace Client.Players
 {
-    class Player:GameObject
+    class LocalPlayer_o:Player_o
     {
         public enum MoveDirection
         {
@@ -17,7 +17,7 @@ namespace Client
             Backward = -1
         }
         public short Index { get; set; }
-        public List<Projectile> Projectiles{ get; set;}
+        public List<ProjectileLocal> Projectiles{ get; set;}
 
         private KeyboardControls Controls { get; set; }
         private int rotationSpeed = 5;
@@ -25,12 +25,12 @@ namespace Client
         private double fireInterval = 300;
         private ProjectileFactory projectileFactory;
 
-        public Player(Game game, PhysicsSimulator physicsSimulator, long sessionID, int id, string imageAssetPath, Vector2 initialPosition, float initialAngle, float zOrder, float mass, float speed, short index, KeyboardControls controls, ProjectileFactory projectileFactory, CollisionCategory collisionCategories) : base(game, physicsSimulator, sessionID, id, imageAssetPath, initialPosition, initialAngle, zOrder, mass, speed, collisionCategories)
+        public LocalPlayer_o(Game game, PhysicsSimulator physicsSimulator, long sessionID, int id, string imageAssetPath, Vector2 initialPosition, float initialAngle, float zOrder, float mass, float speed, short index, KeyboardControls controls, ProjectileFactory projectileFactory, CollisionCategory collisionCategories) : base(game, physicsSimulator, sessionID, id, imageAssetPath, initialPosition, initialAngle, zOrder, mass, speed, collisionCategories)
         {
             Index = index;
             Controls = controls;
             this.projectileFactory = projectileFactory;
-            Projectiles = new List<Projectile>();
+            Projectiles = new List<ProjectileLocal>();
             Geometry.OnCollision += OnCollision;
             Body.LinearDragCoefficient = 100;
             Body.RotationalDragCoefficient = 6000;
@@ -96,12 +96,12 @@ namespace Client
                 return false;
             }
             lastShotFired = now;
-            Projectile newProjectile = projectileFactory.NewProjectile(SessionID, Helpers.GetNewID(), Index, Position, Angle);
+            ProjectileLocal newProjectile = projectileFactory.NewProjectile(SessionID, Helpers.GetNewID(), Index, Position, Angle);
             Projectiles.Add(newProjectile);
             return true;
         }
 
-        public void RemoteProjectile(Projectile projectile)
+        public void RemoteProjectile(ProjectileLocal projectile)
         {
             Projectiles.Remove(projectile);
         }

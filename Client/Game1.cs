@@ -1,21 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using Client.Players;
+using Client.Projectiles;
 using FarseerGames.FarseerPhysics;
-using FarseerGames.FarseerPhysics.Collisions;
-using FarseerGames.FarseerPhysics.Dynamics;
-using FarseerGames.FarseerPhysics.Factories;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using Microsoft.Xna.Framework.Net;
-using Microsoft.Xna.Framework.Storage;
 using Shared;
 namespace Client
 {
@@ -33,11 +24,12 @@ namespace Client
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private NetClient client;
-        private RemoteObjectList<RemotePlayer> remotePlayerList;
-        private RemoteObjectList<RemoteProjectile> remoteProjectileList;
+        private RemoteObjectList<RemotePlayer, TransferableObjectData> remotePlayerList;
+        private RemoteObjectList<ProjectileRemote, TransferableObjectData> remoteProjectileList;
         private PlayerFactory playerFactory;
         private ProjectileFactory projectileFactory;
-        private Player localPlayer;
+        private LocalPlayer localPlayer;
+        private HealthBar localHealthBar;
         private double nextSendUpdate = NetTime.Now;
         private double updateInterval = (1.0/1000.0);
         private PhysicsSimulator physicsSimulator;
@@ -75,13 +67,17 @@ namespace Client
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Services.AddService(typeof(SpriteBatch), spriteBatch);
 
-            remotePlayerList = new RemoteObjectList<RemotePlayer>();
-            remoteProjectileList = new RemoteObjectList<RemoteProjectile>();
+            remotePlayerList = new RemoteObjectList<RemotePlayer,TransferableObjectData>();
+            remoteProjectileList = new RemoteObjectList<ProjectileRemote,TransferableObjectData>();
 
             projectileFactory = new ProjectileFactory(this, physicsSimulator, playerZOrder, 5, 50, "Players/Projectiles/",SharedLists.ProjectileTextureNames);
             playerFactory = new PlayerFactory(this, physicsSimulator, 0, playerMass, playerSpeed, "Players/Avatars/",SharedLists.PlayerTextureNames, projectileFactory);
 
+
             client.DiscoverKnownPeer(host, port);
+            var x = new PhysicsGameObject<TransferableObjectData>(this, 123, 123, "box", new Vector2(0), physicsSimulator, 1, 2, CollisionCategory.Cat9);
+            x.Position = new Vector2(10, 20);
+            x.Draw(new GameTime());
             base.Initialize();
         }
 
@@ -116,6 +112,7 @@ namespace Client
             if (localPlayer != null)
             {
                 localPlayer.Update(gameTime, null);
+                localHealthBar.Update(gameTime,null);
             }
             remotePlayerList.Update(gameTime);
             remoteProjectileList.Update(gameTime);
@@ -146,6 +143,7 @@ namespace Client
             if (localPlayer != null)
             {
                 localPlayer.Draw(gameTime);
+                localHealthBar.Draw(gameTime);
             }
             remotePlayerList.Draw(gameTime);
             remoteProjectileList.Draw(gameTime);
@@ -182,6 +180,8 @@ namespace Client
         {
             var data = msg.ReadObjectData();
             localPlayer = playerFactory.NewPlayer(data.SessionID, data.ID, data.Index, data.Position, data.Angle, new KeyboardControls(Keys.Up, Keys.Down, Keys.Left, Keys.Right, Keys.Space));
+            localHealthBar = new HealthBar(this, physicsSimulator, client.UniqueIdentifier, Helpers.GetNewID(), "healthbar", new Vector2(localPlayer.Index * 100, 25), 0.6f);
+            localHealthBar.Position = new Vector2(localHealthBar.Position.X + localHealthBar.Width / 2 + 15, localHealthBar.Position.Y);
         }
 
         void UpdateOtherPlayer(NetIncomingMessage msg)
@@ -192,7 +192,7 @@ namespace Client
                 remotePlayerList.UpdateData(playerData);
             } else
             {
-                remotePlayerList.Add(playerFactory.NewRemotePlayer(playerData.SessionID, playerData.ID, playerData.Index, playerData.Position, playerData.Angle));
+                remotePlayerList.Add(playerFactory.NewRemotePlayer(playerData.SessionID, playerData.ID, playerData.Index, playerData.Position, playerData.Angle),playerData);
             }
         }
 
@@ -204,7 +204,7 @@ namespace Client
                 remoteProjectileList.UpdateData(projectileData);
             } else
             {
-                remoteProjectileList.Add(projectileFactory.NewRemoteProjectile(projectileData.SessionID, projectileData.ID, projectileData.Index, projectileData.Position, projectileData.Angle));
+                remoteProjectileList.Add(projectileFactory.NewRemoteProjectile(projectileData.SessionID, projectileData.ID, projectileData.Index, projectileData.Position, projectileData.Angle),projectileData);
             }
         }
 

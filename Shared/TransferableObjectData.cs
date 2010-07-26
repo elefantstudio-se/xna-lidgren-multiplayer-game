@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace Shared
 {
-    public class TransferableObjectData
+    public class TransferableObjectData:ITransferable
     {
         public long SessionID { get; set; }
         public int ID { get; set; }

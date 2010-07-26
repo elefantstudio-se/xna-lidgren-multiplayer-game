@@ -313,9 +313,18 @@ public static class XNAExtensions
         return new TransferableObjectData(sessionId, id, index, position, angle, isValid);
     }
 
-    public static void WriteNewPlayerCoordinates(this NetOutgoingMessage message, long id, Vector2 position)
+    public static void Write(this NetOutgoingMessage message, HealthTransferableData healthData)
     {
-        message.Write(id);
-        message.Write(position);
+        message.Write(healthData.ID);
+        message.Write(healthData.IsValid);
+        message.Write(healthData.Value);
+    }
+
+    public static HealthTransferableData ReadHealthData(this NetIncomingMessage message)
+    {
+        int id = message.ReadInt32();
+        bool isValid = message.ReadBoolean();
+        float value = message.ReadFloat();
+        return new HealthTransferableData(id, isValid, value);
     }
 }

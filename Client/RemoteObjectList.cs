@@ -1,31 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using FarseerGames.FarseerPhysics;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Shared;
 
 namespace Client
 {
-    class RemoteObjectList<T> where T:GameObject
+    class RemoteObjectList<T,V> where T:GameObject<V> where V:ITransferable
     {
         public Dictionary<int, T> ObjectsData{ get; set;}
-        public Dictionary<int, TransferableObjectData> RemoteData{ get; set;}
+        public Dictionary<int, ITransferable> RemoteData{ get; set;}
 
         public RemoteObjectList()
         {
             ObjectsData = new Dictionary<int, T>();
-            RemoteData = new Dictionary<int, TransferableObjectData>();
+            RemoteData = new Dictionary<int, ITransferable>();
         }
 
         public void Update(GameTime gameTime)
         {
             foreach (var obj in ObjectsData.Values)
             {
-                obj.Update(gameTime, RemoteData[obj.ID]);
+                obj.Update(gameTime, (V)RemoteData[obj.ID]);
             }
 
             foreach (var key in ObjectsData.Keys.ToArray())
@@ -72,10 +67,10 @@ namespace Client
             return ObjectsData.Count;
         }
 
-        public void Add(T entity)
+        public void Add(T entity, TransferableObjectData initialRemoteData)
         {
             ObjectsData.Add(entity.ID, entity);
-            RemoteData.Add(entity.ID, null);
+            RemoteData.Add(entity.ID, initialRemoteData);
         }
 
         public void Remove(int id)

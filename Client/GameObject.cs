@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using FarseerGames.FarseerPhysics;
 using FarseerGames.FarseerPhysics.Collisions;
 using FarseerGames.FarseerPhysics.Dynamics;
@@ -13,7 +10,7 @@ using Shared;
 
 namespace Client
 {
-    abstract class GameObject
+    abstract class GameObject<T> where T:ITransferable
     {
         public long SessionID { get; set; }
         public int ID { get; set; }
@@ -55,7 +52,7 @@ namespace Client
         private Texture2D Texture;
         protected Body Body;
         protected Geom Geometry;
-        private Vector2 Origin;
+        public Vector2 Origin{ get; set;}
 
         private Rectangle screenBounds;
         protected Game Game{ get; set;}
@@ -77,6 +74,24 @@ namespace Client
                 return screenBounds.Intersects(RelativeBounds);
             }
         }
+
+        public float Width
+        {
+            get
+            {
+                return Texture.Width;
+            }
+        }
+
+        public float Height
+        {
+            get
+            {
+                return Texture.Height;
+            }
+        }
+
+        public Vector2 Scale { get; set; }
 
         protected GameObject(Game game, PhysicsSimulator physicsSimulator, long sessionID, int id, string imageAssetPath, Vector2 initialPosition, float initialAngle, float zOrder, float mass, float speed, CollisionCategory collisionCategories)
         {
@@ -101,14 +116,18 @@ namespace Client
             Geometry.CollisionCategories = collisionCategories;
             Geometry.CollidesWith = CollidesWith(collisionCategories);
             screenBounds = game.GraphicsDevice.ScissorRectangle;
+            Scale = Vector2.One;
         }
 
         public virtual void Draw(GameTime gameTime)
         {
-            spriteBatch.Draw(Texture, Body.Position, null, Color.White, Body.Rotation, Origin, 1, SpriteEffects.None, ZOrder);
+            if (IsInScreen)
+            {
+                spriteBatch.Draw(Texture, Body.Position, null, Color.White, Body.Rotation, Origin, Scale, SpriteEffects.None, ZOrder);
+            }
         }
 
-        public virtual void Update(GameTime gameTime, TransferableObjectData remoteData) { }
+        public virtual void Update(GameTime gameTime, T remoteData) { }
 
         public void Dispose()
         {
@@ -142,3 +161,5 @@ namespace Client
         }
     }
 }
+
+

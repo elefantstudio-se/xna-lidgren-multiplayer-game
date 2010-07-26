@@ -6,14 +6,14 @@ using FarseerGames.FarseerPhysics;
 using Microsoft.Xna.Framework;
 using Shared;
 
-namespace Client
+namespace Client.Players
 {
-    class RemotePlayer:GameObject
+    class RemotePlayer:Player
     {
         private const short DestinationThreshold = 1;
         private const float InterpolationConstant = 0.2f;
 
-        public RemotePlayer(Game game, PhysicsSimulator physicsSimulator, long sessionID, int id, string imageAssetPath, Vector2 initialPosition, float initialAngle, float zOrder, float mass, float speed, CollisionCategory collisionCategories) : base(game, physicsSimulator, sessionID, id, imageAssetPath, initialPosition, initialAngle, zOrder, mass, speed, collisionCategories)
+        public RemotePlayer(Game game, long sessionID, int id, string imageAssetPath, Vector2 position, PhysicsSimulator physicsSimulator, float speed, float mass, CollisionCategory collisionCategories, short index) : base(game, sessionID, id, imageAssetPath, position, physicsSimulator, speed, mass, collisionCategories, index)
         {
         }
 

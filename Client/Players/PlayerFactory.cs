@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Client.Projectiles;
 using FarseerGames.FarseerPhysics;
 using Microsoft.Xna.Framework;
 
-namespace Client
+namespace Client.Players
 {
     class PlayerFactory
     {
@@ -28,9 +25,9 @@ namespace Client
             this.projectileFactory = projectileFactory;
         }
 
-        public Player NewPlayer(long sessionID, int id, short index, Vector2 position, float angle, KeyboardControls controls)
+        public LocalPlayer NewPlayer(long sessionID, int id, short index, Vector2 position, float angle, KeyboardControls controls)
         {
-            return new Player(game, physicsSimulator, sessionID, id, textureFolder + textureNames[index], position, angle, zOrder, mass, speed, index, controls, projectileFactory, CollisionCategory.Cat1);
+            return new LocalPlayer(game, physicsSimulator, sessionID, id, textureFolder + textureNames[index], position, angle, zOrder, mass, speed, index, controls, projectileFactory, CollisionCategory.Cat1);
         }
 
         public RemotePlayer NewRemotePlayer(long sessionID, int id, short index, Vector2 position, float angle)

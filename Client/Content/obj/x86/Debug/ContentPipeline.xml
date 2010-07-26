@@ -82,6 +82,24 @@
       <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFunFarseer\Client\bin\x86\Debug\Content\box.xnb</Output>
       <Time>2010-07-24T03:54:46.9452404+02:00</Time>
     </Item>
+    <Item>
+      <Source>healthbar.png</Source>
+      <Name>healthbar</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFunFarseer\Client\bin\x86\Debug\Content\healthbar.xnb</Output>
+      <Time>2010-07-25T22:43:24.003965+02:00</Time>
+    </Item>
+    <Item>
+      <Source>blankpixel.png</Source>
+      <Name>blankpixel</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Andreas\Documents\Visual Studio 2008\Projects\XNALidgrenFunFarseer\Client\bin\x86\Debug\Content\blankpixel.xnb</Output>
+      <Time>2010-07-25T22:34:43.9232181+02:00</Time>
+    </Item>
     <BuildSuccessful>true</BuildSuccessful>
     <Settings>
       <TargetPlatform>Windows</TargetPlatform>

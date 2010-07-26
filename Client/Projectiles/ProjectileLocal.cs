@@ -6,29 +6,27 @@ using FarseerGames.FarseerPhysics;
 using FarseerGames.FarseerPhysics.Collisions;
 using Microsoft.Xna.Framework;
 
-namespace Client
+namespace Client.Projectiles
 {
-    class Projectile:GameObject
+    class ProjectileLocal:Projectile
     {
         public event EventHandler<ProjectileHitPlayerEventArgs> PlayerHit = delegate { };
-
-        public Projectile(Game game, PhysicsSimulator physicsSimulator, long sessionID, int id, string imageAssetPath, Vector2 initialPosition, float initialAngle, float zOrder, float mass, float speed, CollisionCategory collisionCategories) : base(game, physicsSimulator, sessionID, id, imageAssetPath, initialPosition, initialAngle, zOrder, mass, speed, collisionCategories)
+        public ProjectileLocal(Game game, long sessionID, int id, string imageAssetPath, Vector2 position, PhysicsSimulator physicsSimulator, float speed, float mass, CollisionCategory collisionCategories) : base(game, sessionID, id, imageAssetPath, position, physicsSimulator, speed, mass, collisionCategories)
         {
             Geometry.OnCollision += OnCollision;
             //Body.ApplyForce((Position + Velocity));
             Body.ApplyImpulse(Velocity * Speed);
         }
-
         bool OnCollision(Geom geom1, Geom geom2, ContactList contactList)
         {
             return false;
         }
         public override void Update(GameTime gameTime, Shared.TransferableObjectData remoteData)
         {
-            if (!IsInScreen)
-            {
-                IsValid = false;
-            }
+            //if (!IsInScreen)
+            //{
+            //    IsValid = false;
+            //}
             base.Update(gameTime, remoteData);
             //Position += Velocity;
         }

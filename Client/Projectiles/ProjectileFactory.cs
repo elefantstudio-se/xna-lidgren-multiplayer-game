@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using FarseerGames.FarseerPhysics;
+﻿using FarseerGames.FarseerPhysics;
 using Microsoft.Xna.Framework;
 
-namespace Client
+namespace Client.Projectiles
 {
     class ProjectileFactory
     {
@@ -26,14 +22,14 @@ namespace Client
             this.textureNames = textureNames;
         }
 
-        public Projectile NewProjectile(long sessionID, int id, short index, Vector2 position, float angle)
+        public ProjectileLocal NewProjectile(long sessionID, int id, short index, Vector2 position, float angle)
         {
-            return new Projectile(game, physicsSimulator, sessionID, id, textureFolder + textureNames[index], position, angle, zOrder, mass, speed, CollisionCategory.Cat3);
+            return new ProjectileLocal(game, physicsSimulator, sessionID, id, textureFolder + textureNames[index], position, angle, zOrder, mass, speed, CollisionCategory.Cat3);
         }
 
-        public RemoteProjectile NewRemoteProjectile(long sessionID, int id, short index, Vector2 position, float angle)
+        public ProjectileRemote NewRemoteProjectile(long sessionID, int id, short index, Vector2 position, float angle)
         {
-            return new RemoteProjectile(game, physicsSimulator, sessionID, id, textureFolder + textureNames[index], position, angle, zOrder, mass, speed, CollisionCategory.Cat4);
+            return new ProjectileRemote(game, physicsSimulator, sessionID, id, textureFolder + textureNames[index], position, angle, zOrder, mass, speed, CollisionCategory.Cat4);
         }
     }
 }
