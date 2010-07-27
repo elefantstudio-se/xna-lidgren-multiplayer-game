@@ -8,17 +8,18 @@ using Shared;
 
 namespace Client.Players
 {
-    class RemotePlayer:Player
+    class PlayerRemote:Player
     {
         private const short DestinationThreshold = 1;
         private const float InterpolationConstant = 0.2f;
 
-        public RemotePlayer(Game game, long sessionID, int id, string imageAssetPath, Vector2 position, PhysicsSimulator physicsSimulator, float speed, float mass, CollisionCategory collisionCategories, short index) : base(game, sessionID, id, imageAssetPath, position, physicsSimulator, speed, mass, collisionCategories, index)
+        public PlayerRemote(Game game, long sessionID, int id, string imageAssetPath, Vector2 position, float angle, PhysicsSimulator physicsSimulator, float speed, float mass, CollisionCategory collisionCategories, short index) : base(game, sessionID, id, imageAssetPath, position, angle, physicsSimulator, speed, mass, collisionCategories, index)
         {
         }
 
         public override void Update(GameTime gametime, TransferableObjectData remoteData)
         {
+            Console.WriteLine(remoteData.Position);
             UpdatePosition(remoteData);
             UpdateAngle(remoteData);
         }
@@ -84,6 +85,11 @@ namespace Client.Players
                 return;
             }
             Angle = remoteData.Angle;
+        }
+        public override void Draw(GameTime gametime)
+        {
+            Console.WriteLine(Position);
+            base.Draw(gametime);
         }
     }
 }

@@ -27,12 +27,12 @@ namespace Client.Players
 
         public LocalPlayer NewPlayer(long sessionID, int id, short index, Vector2 position, float angle, KeyboardControls controls)
         {
-            return new LocalPlayer(game, physicsSimulator, sessionID, id, textureFolder + textureNames[index], position, angle, zOrder, mass, speed, index, controls, projectileFactory, CollisionCategory.Cat1);
+            return new LocalPlayer(game, sessionID, id, textureFolder + textureNames[index], position, angle, physicsSimulator, speed, mass, CollisionCategory.Cat1, index, controls, projectileFactory);
         }
 
-        public RemotePlayer NewRemotePlayer(long sessionID, int id, short index, Vector2 position, float angle)
+        public PlayerRemote NewRemotePlayer(long sessionID, int id, short index, Vector2 position, float angle)
         {
-            return new RemotePlayer(game, physicsSimulator, sessionID, id, textureFolder + textureNames[index], position, angle, zOrder, mass, speed, CollisionCategory.Cat2);
+            return new PlayerRemote(game, sessionID, id, textureFolder + textureNames[index], position, angle, physicsSimulator, speed, mass, CollisionCategory.Cat1, index);
         }
     }
 }

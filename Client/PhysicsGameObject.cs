@@ -13,63 +13,27 @@ namespace Client
 {
     class PhysicsGameObject<T>:DrawableGameObject<T> where T:ITransferable
     {
-        public float Speed { get; set; }
         public float Mass { get; set; }
-        public Vector2 Velocity
-        {
-            get
-            {
-                return new Vector2((float)Math.Sin(Angle),-(float)Math.Cos(Angle)) * Speed;
-            }
-        }
-
         public PhysicsSimulator PhysicsSimulator;
         public Body Body { get; set;}
         public Geom Geometry{ get; set;}
-        public override sealed Vector2 Position
-        {
-            get
-            {
-                return Body.Position;
-            }
-            set
-            {
-                Body.Position = value;
-            }
-        }
-        public override sealed float Angle
-        {
-            get
-            {
-                return Body.Rotation;
-            }
-            set
-            {
-                Body.Rotation = value;
-            }
-        }
 
-        public PhysicsGameObject(Game game, long sessionID, int id, string imageAssetPath,Vector2 position, PhysicsSimulator physicsSimulator, float speed, float mass, CollisionCategory collisionCategories) : base(game, sessionID, id, imageAssetPath, position)
+        public PhysicsGameObject(Game game, long sessionID, int id, string imageAssetPath, Vector2 position, float angle, PhysicsSimulator physicsSimulator, float speed, float mass, CollisionCategory collisionCategories) : base(game, sessionID, id, imageAssetPath)
         {
             PhysicsSimulator = physicsSimulator;
             Speed = speed;
             Mass = mass;
+
             uint[] colorData = new uint[Texture.Width * Texture.Height];
             Texture.GetData(colorData);
             Vertices vertices = Vertices.CreatePolygon(colorData, Texture.Width, Texture.Height);
             Origin = vertices.GetCentroid();
             Body = BodyFactory.Instance.CreatePolygonBody(PhysicsSimulator, vertices, mass);
-            Body.Position = Position;
-            Body.Rotation = Angle;
+            Position = position;
+            Angle = angle;
             Geometry = GeomFactory.Instance.CreatePolygonGeom(physicsSimulator, Body, vertices, 0);
             Geometry.CollisionCategories = collisionCategories;
             Geometry.CollidesWith = CollidesWith(collisionCategories);
-        }
-
-        public void Dispose()
-        {
-            Body.Dispose();
-            Geometry.Dispose();
         }
 
         static CollisionCategory CollidesWith(CollisionCategory categories)
@@ -87,6 +51,18 @@ namespace Client
                 case CollisionCategory.Cat4: return CollisionCategory.All & ~CollisionCategory.Cat2;
                 default: return CollisionCategory.All;
             }
+        }
+
+        public sealed override Vector2 Position
+        {
+            get { return Body.Position; }
+            set { Body.Position = value; }
+        }
+
+        public sealed override float Angle
+        {
+            get { return Body.Rotation; }
+            set { Body.Rotation = value; }
         }
     }
 }

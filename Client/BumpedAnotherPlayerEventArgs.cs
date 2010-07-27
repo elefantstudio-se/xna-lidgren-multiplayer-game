@@ -5,9 +5,9 @@ namespace Client
 {
     class BumpedAnotherPlayerEventArgs : EventArgs
     {
-        public RemotePlayer OtherPlayer { get; set; }
+        public PlayerRemote OtherPlayer { get; set; }
 
-        public BumpedAnotherPlayerEventArgs(RemotePlayer otherPlayer)
+        public BumpedAnotherPlayerEventArgs(PlayerRemote otherPlayer)
         {
             OtherPlayer = otherPlayer;
         }

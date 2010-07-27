@@ -18,7 +18,7 @@ namespace Client.Players
             Backward = -1
         }
 
-        public LocalPlayer(Game game, long sessionID, int id, string imageAssetPath, Vector2 position, PhysicsSimulator physicsSimulator, float speed, float mass, CollisionCategory collisionCategories, short index, KeyboardControls controls, ProjectileFactory projectileFactory) : base(game, sessionID, id, imageAssetPath, position, physicsSimulator, speed, mass, collisionCategories, index)
+        public LocalPlayer(Game game, long sessionID, int id, string imageAssetPath, Vector2 position, float angle, PhysicsSimulator physicsSimulator, float speed, float mass, CollisionCategory collisionCategories, short index, KeyboardControls controls, ProjectileFactory projectileFactory) : base(game, sessionID, id, imageAssetPath, position, angle, physicsSimulator, speed, mass, collisionCategories, index)
         {
             Controls = controls;
             this.projectileFactory = projectileFactory;
@@ -28,7 +28,6 @@ namespace Client.Players
             Body.RotationalDragCoefficient = 6000;
         }
 
-        public short Index { get; set; }
         public List<ProjectileLocal> Projectiles{ get; set;}
 
         private KeyboardControls Controls { get; set; }
@@ -37,9 +36,6 @@ namespace Client.Players
         private double fireInterval = 300;
         private readonly ProjectileFactory projectileFactory;
 
-        //public LP(Game game, PhysicsSimulator physicsSimulator, long sessionID, int id, string imageAssetPath, Vector2 initialPosition, float initialAngle, float zOrder, float mass, float speed, CollisionCategory collisionCategories, short index, KeyboardControls controls, ProjectileFactory projectileFactory) : base(game, physicsSimulator, sessionID, id, imageAssetPath, initialPosition, initialAngle, zOrder, mass, speed, collisionCategories)
-        //{
-        //}
         bool OnCollision(Geom geom1, Geom geom2, ContactList contactList)
         {
             return true;
@@ -101,6 +97,7 @@ namespace Client.Players
             }
             lastShotFired = now;
             ProjectileLocal newProjectile = projectileFactory.NewProjectile(SessionID, Helpers.GetNewID(), Index, Position, Angle);
+            newProjectile.Fire();
             Projectiles.Add(newProjectile);
             return true;
         }

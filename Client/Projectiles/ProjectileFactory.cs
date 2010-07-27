@@ -24,12 +24,12 @@ namespace Client.Projectiles
 
         public ProjectileLocal NewProjectile(long sessionID, int id, short index, Vector2 position, float angle)
         {
-            return new ProjectileLocal(game, physicsSimulator, sessionID, id, textureFolder + textureNames[index], position, angle, zOrder, mass, speed, CollisionCategory.Cat3);
+            return new ProjectileLocal(game, sessionID, id, textureFolder + textureNames[index], position, angle, physicsSimulator, speed, mass, CollisionCategory.Cat3);
         }
 
         public ProjectileRemote NewRemoteProjectile(long sessionID, int id, short index, Vector2 position, float angle)
         {
-            return new ProjectileRemote(game, physicsSimulator, sessionID, id, textureFolder + textureNames[index], position, angle, zOrder, mass, speed, CollisionCategory.Cat4);
+            return new ProjectileRemote(game, sessionID, id, textureFolder + textureNames[index], position, angle, physicsSimulator, speed, mass, CollisionCategory.Cat3);
         }
     }
 }

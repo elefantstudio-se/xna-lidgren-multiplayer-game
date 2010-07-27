@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Shared;
 
 namespace Client
 {
-    class RemoteObjectList<T,V> where T:GameObject<V> where V:ITransferable
+    class RemoteObjectList<T,V> where T:DrawableGameObject<V> where V:ITransferable
     {
         public Dictionary<int, T> ObjectsData{ get; set;}
         public Dictionary<int, ITransferable> RemoteData{ get; set;}
@@ -28,7 +29,7 @@ namespace Client
                 var obj = ObjectsData[key];
                 if (!obj.IsValid)
                 {
-                    obj.Dispose();
+                    //obj.Dispose();
                     ObjectsData.Remove(obj.ID);
                     RemoteData.Remove(obj.ID);
                 }

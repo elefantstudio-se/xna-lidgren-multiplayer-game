@@ -11,10 +11,14 @@ namespace Client.Projectiles
     class ProjectileLocal:Projectile
     {
         public event EventHandler<ProjectileHitPlayerEventArgs> PlayerHit = delegate { };
-        public ProjectileLocal(Game game, long sessionID, int id, string imageAssetPath, Vector2 position, PhysicsSimulator physicsSimulator, float speed, float mass, CollisionCategory collisionCategories) : base(game, sessionID, id, imageAssetPath, position, physicsSimulator, speed, mass, collisionCategories)
+        public ProjectileLocal(Game game, long sessionID, int id, string imageAssetPath, Vector2 position, float angle, PhysicsSimulator physicsSimulator, float speed, float mass, CollisionCategory collisionCategories) : base(game, sessionID, id, imageAssetPath, position, angle, physicsSimulator, speed, mass, collisionCategories)
         {
             Geometry.OnCollision += OnCollision;
             //Body.ApplyForce((Position + Velocity));
+        }
+
+        public void Fire()
+        {
             Body.ApplyImpulse(Velocity * Speed);
         }
         bool OnCollision(Geom geom1, Geom geom2, ContactList contactList)

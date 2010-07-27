@@ -24,7 +24,7 @@ namespace Client
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private NetClient client;
-        private RemoteObjectList<RemotePlayer, TransferableObjectData> remotePlayerList;
+        private RemoteObjectList<PlayerRemote, TransferableObjectData> remotePlayerList;
         private RemoteObjectList<ProjectileRemote, TransferableObjectData> remoteProjectileList;
         private PlayerFactory playerFactory;
         private ProjectileFactory projectileFactory;
@@ -67,7 +67,7 @@ namespace Client
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Services.AddService(typeof(SpriteBatch), spriteBatch);
 
-            remotePlayerList = new RemoteObjectList<RemotePlayer,TransferableObjectData>();
+            remotePlayerList = new RemoteObjectList<PlayerRemote,TransferableObjectData>();
             remoteProjectileList = new RemoteObjectList<ProjectileRemote,TransferableObjectData>();
 
             projectileFactory = new ProjectileFactory(this, physicsSimulator, playerZOrder, 5, 50, "Players/Projectiles/",SharedLists.ProjectileTextureNames);
@@ -75,9 +75,6 @@ namespace Client
 
 
             client.DiscoverKnownPeer(host, port);
-            var x = new PhysicsGameObject<TransferableObjectData>(this, 123, 123, "box", new Vector2(0), physicsSimulator, 1, 2, CollisionCategory.Cat9);
-            x.Position = new Vector2(10, 20);
-            x.Draw(new GameTime());
             base.Initialize();
         }
 
@@ -180,7 +177,7 @@ namespace Client
         {
             var data = msg.ReadObjectData();
             localPlayer = playerFactory.NewPlayer(data.SessionID, data.ID, data.Index, data.Position, data.Angle, new KeyboardControls(Keys.Up, Keys.Down, Keys.Left, Keys.Right, Keys.Space));
-            localHealthBar = new HealthBar(this, physicsSimulator, client.UniqueIdentifier, Helpers.GetNewID(), "healthbar", new Vector2(localPlayer.Index * 100, 25), 0.6f);
+            localHealthBar = new HealthBar(this, client.UniqueIdentifier,Helpers.GetNewID(),"blankpixel",new Vector2(localPlayer.Index * 100, 25));
             localHealthBar.Position = new Vector2(localHealthBar.Position.X + localHealthBar.Width / 2 + 15, localHealthBar.Position.Y);
         }
 
@@ -190,9 +187,10 @@ namespace Client
             if (remotePlayerList.Exists(playerData.ID))
             {
                 remotePlayerList.UpdateData(playerData);
-            } else
+            }
+            else
             {
-                remotePlayerList.Add(playerFactory.NewRemotePlayer(playerData.SessionID, playerData.ID, playerData.Index, playerData.Position, playerData.Angle),playerData);
+                remotePlayerList.Add(playerFactory.NewRemotePlayer(playerData.SessionID, playerData.ID, playerData.Index, playerData.Position, playerData.Angle), playerData);
             }
         }
 
@@ -227,7 +225,7 @@ namespace Client
                 client.SendMessage(om, NetDeliveryMethod.UnreliableSequenced);
                 if (!projectile.IsValid)
                 {
-                    localPlayer.RemoteProjectile(projectile);
+                    localPlayer.RemoveProjectile(projectile);
                 }
             }
         }
