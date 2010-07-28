@@ -8,20 +8,20 @@ using Shared;
 
 namespace Client.Projectiles
 {
-    class ProjectileRemote:Projectile
+    class ProjectileRemote:Projectile, IRemotelyUpdateable
     {
         public ProjectileRemote(Game game, long sessionID, int id, string imageAssetPath, Vector2 position, float angle, PhysicsSimulator physicsSimulator, float speed, float mass, CollisionCategory collisionCategories) : base(game, sessionID, id, imageAssetPath, position, angle, physicsSimulator, speed, mass, collisionCategories)
         {
         }
 
-        public override void Update(GameTime gameTime, TransferableObjectData remoteData)
+        public void Update(GameTime gameTime, ITransferable remoteData)
         {
+            var data = (TransferableObjectData) remoteData;
             //if (!IsInScreen)
             //{
             //    IsValid = false;
             //}
-            Position = remoteData.Position;
-            base.Update(gameTime, remoteData);
+            Position = data.Position;
         }
     }
 }

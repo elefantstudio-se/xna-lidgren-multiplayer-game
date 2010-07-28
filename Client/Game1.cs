@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Client.Entities;
 using Client.Players;
 using Client.Projectiles;
 using FarseerGames.FarseerPhysics;
@@ -24,8 +25,8 @@ namespace Client
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private NetClient client;
-        private RemoteObjectList<PlayerRemote, TransferableObjectData> remotePlayerList;
-        private RemoteObjectList<ProjectileRemote, TransferableObjectData> remoteProjectileList;
+        private RemoteObjectList RemoteObjectsList;
+        private LocalObjectList LocalObjectList;
         private PlayerFactory playerFactory;
         private ProjectileFactory projectileFactory;
         private LocalPlayer localPlayer;
@@ -44,7 +45,7 @@ namespace Client
             graphics = new GraphicsDeviceManager(this) { PreferredBackBufferWidth = 640, PreferredBackBufferHeight = 480 };
             Screen = new Rectangle(0, 0,graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
             Content.RootDirectory = "Content";
-            NetPeerConfiguration config = new NetPeerConfiguration("xnaapp");
+            var config = new NetPeerConfiguration("xnaapp");
             config.EnableMessageType(NetIncomingMessageType.DiscoveryResponse);
 
             client = new NetClient(config);
@@ -67,8 +68,8 @@ namespace Client
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Services.AddService(typeof(SpriteBatch), spriteBatch);
 
-            remotePlayerList = new RemoteObjectList<PlayerRemote,TransferableObjectData>();
-            remoteProjectileList = new RemoteObjectList<ProjectileRemote,TransferableObjectData>();
+            RemoteObjectsList = new RemoteObjectList();
+            LocalObjectList = new LocalObjectList();
 
             projectileFactory = new ProjectileFactory(this, physicsSimulator, playerZOrder, 5, 50, "Players/Projectiles/",SharedLists.ProjectileTextureNames);
             playerFactory = new PlayerFactory(this, physicsSimulator, 0, playerMass, playerSpeed, "Players/Avatars/",SharedLists.PlayerTextureNames, projectileFactory);
@@ -106,13 +107,9 @@ namespace Client
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            if (localPlayer != null)
-            {
-                localPlayer.Update(gameTime, null);
-                localHealthBar.Update(gameTime,null);
-            }
-            remotePlayerList.Update(gameTime);
-            remoteProjectileList.Update(gameTime);
+            LocalObjectList.Update(gameTime);
+            RemoteObjectsList.Update(gameTime);
+
             if (NetTime.Now > nextSendUpdate)
             {
                 if (localPlayer != null)
@@ -137,13 +134,8 @@ namespace Client
             GraphicsDevice.Clear(BackgroundColor);
             spriteBatch.Begin(SpriteBlendMode.AlphaBlend);
 
-            if (localPlayer != null)
-            {
-                localPlayer.Draw(gameTime);
-                localHealthBar.Draw(gameTime);
-            }
-            remotePlayerList.Draw(gameTime);
-            remoteProjectileList.Draw(gameTime);
+            LocalObjectList.Draw(gameTime);
+            RemoteObjectsList.Draw(gameTime);
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -179,30 +171,33 @@ namespace Client
             localPlayer = playerFactory.NewPlayer(data.SessionID, data.ID, data.Index, data.Position, data.Angle, new KeyboardControls(Keys.Up, Keys.Down, Keys.Left, Keys.Right, Keys.Space));
             localHealthBar = new HealthBar(this, client.UniqueIdentifier,Helpers.GetNewID(),"blankpixel",new Vector2(localPlayer.Index * 100, 25));
             localHealthBar.Position = new Vector2(localHealthBar.Position.X + localHealthBar.Width / 2 + 15, localHealthBar.Position.Y);
+            LocalObjectList.Add(localPlayer,localHealthBar);
         }
 
         void UpdateOtherPlayer(NetIncomingMessage msg)
         {
             var playerData = msg.ReadObjectData();
-            if (remotePlayerList.Exists(playerData.ID))
+            if (RemoteObjectsList.Exists(playerData.ID))
             {
-                remotePlayerList.UpdateData(playerData);
+                RemoteObjectsList.UpdateData(playerData);
             }
             else
             {
-                remotePlayerList.Add(playerFactory.NewRemotePlayer(playerData.SessionID, playerData.ID, playerData.Index, playerData.Position, playerData.Angle), playerData);
+                PlayerRemote newPlayer = playerFactory.NewRemotePlayer(playerData.SessionID, playerData.ID, playerData.Index, playerData.Position, playerData.Angle);
+                RemoteObjectsList.Add(newPlayer, playerData);
             }
         }
 
         void UpdateProjectile(NetIncomingMessage msg)
         {
             var projectileData = msg.ReadObjectData();
-            if (remoteProjectileList.Exists(projectileData.ID))
+            if (RemoteObjectsList.Exists(projectileData.ID))
             {
-                remoteProjectileList.UpdateData(projectileData);
-            } else
+                RemoteObjectsList.UpdateData(projectileData);
+            }
+            else
             {
-                remoteProjectileList.Add(projectileFactory.NewRemoteProjectile(projectileData.SessionID, projectileData.ID, projectileData.Index, projectileData.Position, projectileData.Angle),projectileData);
+                RemoteObjectsList.Add(projectileFactory.NewRemoteProjectile(projectileData.SessionID, projectileData.ID, projectileData.Index, projectileData.Position, projectileData.Angle), projectileData);
             }
         }
 

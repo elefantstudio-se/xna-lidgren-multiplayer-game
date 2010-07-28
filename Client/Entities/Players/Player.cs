@@ -8,7 +8,7 @@ using Shared;
 
 namespace Client.Players
 {
-    abstract class Player:PhysicsGameObject<TransferableObjectData>
+    abstract class Player:PhysicsGameObject
     {
         public short Index { get; set; }
         protected Player(Game game, long sessionID, int id, string imageAssetPath, Vector2 position, float angle, PhysicsSimulator physicsSimulator, float speed, float mass, CollisionCategory collisionCategories, short index) : base(game, sessionID, id, imageAssetPath, position, angle, physicsSimulator, speed, mass, collisionCategories)

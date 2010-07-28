@@ -11,7 +11,7 @@ using Shared;
 
 namespace Client
 {
-    class PhysicsGameObject<T>:DrawableGameObject<T> where T:ITransferable
+    class PhysicsGameObject:DrawableGameObject
     {
         public float Mass { get; set; }
         public PhysicsSimulator PhysicsSimulator;
@@ -63,6 +63,12 @@ namespace Client
         {
             get { return Body.Rotation; }
             set { Body.Rotation = value; }
+        }
+
+        public override void Destroy()
+        {
+            Body.Dispose();
+            Geometry.Dispose();
         }
     }
 }

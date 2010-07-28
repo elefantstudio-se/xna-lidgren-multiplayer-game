@@ -7,7 +7,7 @@ using Shared;
 
 namespace Client
 {
-    class SimpleDrawableGameObject<T>:DrawableGameObject<T> where T:ITransferable
+    class SimpleDrawableGameObject:DrawableGameObject
     {
         public sealed override Vector2 Position{ get; set;}
         public sealed override float Angle { get; set; }

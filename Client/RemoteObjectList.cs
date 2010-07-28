@@ -1,83 +1,86 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Client.Players;
 using Microsoft.Xna.Framework;
 using Shared;
 
 namespace Client
 {
-    class RemoteObjectList<T,V> where T:DrawableGameObject<V> where V:ITransferable
+    class UpdateableObject
     {
-        public Dictionary<int, T> ObjectsData{ get; set;}
-        public Dictionary<int, ITransferable> RemoteData{ get; set;}
+        public IRemotelyUpdateable Entity { get; set; }
+        public ITransferable RemoteData { get; set; }
+
+        public UpdateableObject(IRemotelyUpdateable entity, ITransferable remoteData)
+        {
+            Entity = entity;
+            RemoteData = remoteData;
+        }
+    }
+
+    class RemoteObjectList
+    {
+        public Dictionary<int, UpdateableObject> Entities;
 
         public RemoteObjectList()
         {
-            ObjectsData = new Dictionary<int, T>();
-            RemoteData = new Dictionary<int, ITransferable>();
+            Entities = new Dictionary<int, UpdateableObject>();
         }
+
+        public void Add<T>(T entity, ITransferable remoteData) where T:DrawableGameObject, IRemotelyUpdateable
+        {
+            Entities.Add(entity.ID,new UpdateableObject(entity,remoteData));
+        }
+
 
         public void Update(GameTime gameTime)
         {
-            foreach (var obj in ObjectsData.Values)
+            foreach (var data in Entities.Values)
             {
-                obj.Update(gameTime, (V)RemoteData[obj.ID]);
+                var entity = data.Entity;
+                entity.Update(gameTime,data.RemoteData);
             }
-
-            foreach (var key in ObjectsData.Keys.ToArray())
+            foreach (var id in Entities.Keys.ToArray())
             {
-                var obj = ObjectsData[key];
-                if (!obj.IsValid)
+                var entity = (DrawableGameObject)Entities[id].Entity;
+                if (!entity.IsValid)
                 {
-                    //obj.Dispose();
-                    ObjectsData.Remove(obj.ID);
-                    RemoteData.Remove(obj.ID);
+                    Remove(id);
+                    entity.Destroy();
                 }
             }
         }
 
         public void Draw(GameTime gameTime)
         {
-            foreach (var obj in ObjectsData.Values)
+            foreach (var data in Entities.Values)
             {
-                obj.Draw(gameTime);
+                ((DrawableGameObject)data.Entity).Draw(gameTime);
             }
         }
         
-        public void UpdateData(TransferableObjectData data)
+        public void UpdateData(ITransferable data)
         {
             if (!data.IsValid)
             {
-                ObjectsData.Remove(data.ID);
-                RemoteData.Remove(data.ID);
+                Entities.Remove(data.ID);
                 return;
             }
-            if (ObjectsData.ContainsKey(data.ID))
+            if (Entities.ContainsKey(data.ID))
             {
-                RemoteData[data.ID] = data;
+                Entities[data.ID].RemoteData = data;
             }
         }
 
         public bool Exists(int id)
         {
-            return ObjectsData.ContainsKey(id);
-        }
-
-        public int Count()
-        {
-            return ObjectsData.Count;
-        }
-
-        public void Add(T entity, TransferableObjectData initialRemoteData)
-        {
-            ObjectsData.Add(entity.ID, entity);
-            RemoteData.Add(entity.ID, initialRemoteData);
+            return Entities.ContainsKey(id);
         }
 
         public void Remove(int id)
         {
-            ObjectsData.Remove(id);
-            RemoteData.Remove(id);
+            Entities.Remove(id);
         }
     }
 }

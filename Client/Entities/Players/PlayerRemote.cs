@@ -8,7 +8,7 @@ using Shared;
 
 namespace Client.Players
 {
-    class PlayerRemote:Player
+    class PlayerRemote:Player, IRemotelyUpdateable
     {
         private const short DestinationThreshold = 1;
         private const float InterpolationConstant = 0.2f;
@@ -17,11 +17,12 @@ namespace Client.Players
         {
         }
 
-        public override void Update(GameTime gametime, TransferableObjectData remoteData)
+        public void Update(GameTime gametime, ITransferable remoteData)
         {
-            Console.WriteLine(remoteData.Position);
-            UpdatePosition(remoteData);
-            UpdateAngle(remoteData);
+            var data = (TransferableObjectData) remoteData;
+            Console.WriteLine(data.Position);
+            UpdatePosition(data);
+            UpdateAngle(data);
         }
 
         void UpdatePosition(TransferableObjectData remoteData)

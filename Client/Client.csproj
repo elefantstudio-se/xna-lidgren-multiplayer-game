@@ -92,25 +92,27 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BumpedAnotherPlayerEventArgs.cs" />
+    <Compile Include="dev.cs" />
+    <Compile Include="Entities\Players\EventArguments\BumpedAnotherPlayerEventArgs.cs" />
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="DrawableGameObject.cs" />
-    <Compile Include="GameObject_o.cs" />
     <Compile Include="GameObject.cs" />
-    <Compile Include="HealthBar.cs" />
-    <Compile Include="IDrawable.cs" />
+    <Compile Include="Entities\HealthBar.cs" />
+    <Compile Include="IDestroyable.cs" />
+    <Compile Include="IRemotelyUpdateable.cs" />
     <Compile Include="KeyboardControls.cs" />
+    <Compile Include="LocalObjectList.cs" />
     <Compile Include="PhysicsGameObject.cs" />
-    <Compile Include="Players\LocalPlayer.cs" />
-    <Compile Include="Players\Player.cs" />
-    <Compile Include="Players\PlayerFactory.cs" />
-    <Compile Include="Players\PlayerRemote.cs" />
-    <Compile Include="Projectiles\ProjectileLocal.cs" />
-    <Compile Include="Projectiles\Projectile.cs" />
-    <Compile Include="Projectiles\ProjectileRemote.cs" />
-    <Compile Include="Projectiles\ProjectileFactory.cs" />
-    <Compile Include="Projectiles\EventArguments\ProjectileFiredEventArgs.cs" />
-    <Compile Include="Projectiles\EventArguments\ProjectileHitAnotherPlayerEventArgs.cs" />
+    <Compile Include="Entities\Players\LocalPlayer.cs" />
+    <Compile Include="Entities\Players\Player.cs" />
+    <Compile Include="Entities\Players\PlayerFactory.cs" />
+    <Compile Include="Entities\Players\PlayerRemote.cs" />
+    <Compile Include="Entities\Projectiles\ProjectileLocal.cs" />
+    <Compile Include="Entities\Projectiles\Projectile.cs" />
+    <Compile Include="Entities\Projectiles\ProjectileRemote.cs" />
+    <Compile Include="Entities\Projectiles\ProjectileFactory.cs" />
+    <Compile Include="Entities\Projectiles\EventArguments\ProjectileFiredEventArgs.cs" />
+    <Compile Include="Entities\Projectiles\EventArguments\ProjectileHitAnotherPlayerEventArgs.cs" />
     <Compile Include="RemoteObjectList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />

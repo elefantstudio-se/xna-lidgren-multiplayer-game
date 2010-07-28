@@ -6,9 +6,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Shared;
 
-namespace Client
+namespace Client.Entities
 {
-    class HealthBar:SimpleDrawableGameObject<HealthTransferableData>
+    class HealthBar:SimpleDrawableGameObject, IDestroyable
     {
         public HealthBar(Game game, long sessionID, int id, string imageAssetPath, Vector2 position) : base(game, sessionID, id, imageAssetPath, position, 0, 0)
         {

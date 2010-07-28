@@ -1,7 +1,6 @@
 ﻿using System;
-using Client.Players;
 
-namespace Client
+namespace Client.Players.EventArguments
 {
     class BumpedAnotherPlayerEventArgs : EventArgs
     {

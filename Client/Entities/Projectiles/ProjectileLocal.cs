@@ -25,13 +25,13 @@ namespace Client.Projectiles
         {
             return false;
         }
-        public override void Update(GameTime gameTime, Shared.TransferableObjectData remoteData)
+        public override void Update(GameTime gameTime)
         {
             //if (!IsInScreen)
             //{
             //    IsValid = false;
             //}
-            base.Update(gameTime, remoteData);
+            base.Update(gameTime);
             //Position += Velocity;
         }
     }

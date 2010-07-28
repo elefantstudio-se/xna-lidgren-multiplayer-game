@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Shared;
 
 namespace Client
 {
-    abstract class GameObject<T> where T:ITransferable
+    abstract class GameObject
     {
         public Game Game { get; set; }
         public long SessionID { get; set; }
@@ -16,7 +15,7 @@ namespace Client
         public bool IsValid { get; set; }
 
 
-        protected Keys[] InputKeys
+        protected static Keys[] InputKeys
         {
             get
             {
@@ -32,7 +31,12 @@ namespace Client
             IsValid = true;
         }
 
-        public virtual void Update(GameTime gameTime, T remoteData)
+        public virtual void Update(GameTime gameTime)
+        {
+            
+        }
+
+        public virtual void Destroy()
         {
             
         }

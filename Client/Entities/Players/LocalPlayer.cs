@@ -52,7 +52,7 @@ namespace Client.Players
             Angle += angle;
         }
 
-        public override void Update(GameTime gameTime, TransferableObjectData remoteData)
+        public override void Update(GameTime gameTime)
         {
             if (InputKeys.Contains(Controls.Forward))
             {
@@ -79,8 +79,8 @@ namespace Client.Players
                 Fire(gameTime);
             }
 
-            Projectiles.ForEach(p => p.Update(gameTime, null));
-            base.Update(gameTime, null);
+            Projectiles.ForEach(p => p.Update(gameTime));
+            base.Update(gameTime);
         }
         public override void Draw(GameTime gameTime)
         {

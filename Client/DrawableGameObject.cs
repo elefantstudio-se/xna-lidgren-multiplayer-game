@@ -8,7 +8,7 @@ using Shared;
 
 namespace Client
 {
-    abstract class DrawableGameObject<T>:GameObject<T> where T:ITransferable
+    abstract class DrawableGameObject:GameObject
     {
         public abstract Vector2 Position{ get; set;}
         public abstract float Angle{ get; set;}
@@ -39,19 +39,37 @@ namespace Client
                 return new Vector2((float)Math.Sin(Angle),-(float)Math.Cos(Angle)) * Speed;
             }
         }
+        public Rectangle Bounds
+        {
+            get
+            {
+                return new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
+            }
+        }
+        protected bool IsInScreen
+        {
+            get
+            {
+                return screenBounds.Intersects(Bounds);
+            }
+        }
+
+        private Rectangle screenBounds;
 
         protected DrawableGameObject(Game game, long sessionID, int id, string imageAssetPath) : base(game, sessionID, id)
         {
             SpriteBatch = (SpriteBatch) Game.Services.GetService(typeof (SpriteBatch));
             Texture = Game.Content.Load<Texture2D>(imageAssetPath);
             Origin = new Vector2(Width/2, Height/2);
+            screenBounds = Game.GraphicsDevice.ScissorRectangle;
         }
 
         public virtual void Draw(GameTime gametime)
         {
-            SpriteBatch.Draw(Texture,Position,null,Color.White,Angle,Origin,1,SpriteEffects.None,ZOrder);
+            if (IsInScreen)
+            {
+                SpriteBatch.Draw(Texture, Position, null, Color.White, Angle, Origin, 1, SpriteEffects.None, ZOrder);
+            }
         }
-
-        //public virtual void Dispose(){}
     }
 }

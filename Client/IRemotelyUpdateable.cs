@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Shared;
 
 namespace Client
 {
-    interface IDrawable
+    interface IRemotelyUpdateable
     {
-        Vector2 Position { get; set; }
-        float Angle { get; set; }
-
-        void Draw(GameTime gametime);
+        void Update(GameTime gameTime, ITransferable remoteData);
     }
 }
