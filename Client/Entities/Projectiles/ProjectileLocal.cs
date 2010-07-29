@@ -41,7 +41,7 @@ namespace Client.Projectiles
         public void SendUpdates(NetClient client)
         {
             NetOutgoingMessage om = client.CreateMessage();
-            om.Write("projectile_data");
+            om.Write(Helpers.TransferType.ProjectileUpdate);
             om.Write(new ProjectileTransferableData(client.UniqueIdentifier,ID,IsValid,Position,Angle));
             client.SendMessage(om, NetDeliveryMethod.UnreliableSequenced);
         }

@@ -350,4 +350,13 @@ public static class XNAExtensions
         float angle = message.ReadFloat();
         return new ProjectileTransferableData(sessionID, id,isValid,position,angle);
     }
+
+    public static void Write(this NetOutgoingMessage message, Helpers.TransferType type)
+    {
+        message.Write((int)type);
+    }
+    public static Helpers.TransferType ReadTransferType(this NetIncomingMessage message)
+    {
+        return (Helpers.TransferType) message.ReadInt32();
+    }
 }

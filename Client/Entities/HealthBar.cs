@@ -92,7 +92,7 @@ namespace Client.Entities
         public void SendUpdates(NetClient client)
         {
             var message = client.CreateMessage();
-            message.Write("healthbar_data");
+            message.Write(Helpers.TransferType.HealthUpdate);
             message.Write(new HealthTransferableData(client.UniqueIdentifier, ID, IsValid, index, Value));
             client.SendMessage(message, NetDeliveryMethod.ReliableOrdered);
         }

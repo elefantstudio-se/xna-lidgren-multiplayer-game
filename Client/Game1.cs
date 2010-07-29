@@ -162,13 +162,14 @@ namespace Client
 
         void ReadData(NetIncomingMessage msg)
         {
-            var type = msg.ReadString();
+            //var type = msg.ReadString();
+            var type = msg.ReadTransferType();
             switch (type)
             {
-                case "new_connection": NewServerConnection(msg); break;
-                case "player_data": UpdateOtherPlayer(msg); break;
-                case "projectile_data": UpdateProjectile(msg); break;
-                case "healthbar_data":UpdateHealthBar(msg); break;
+                case Helpers.TransferType.NewConnection: NewServerConnection(msg); break;
+                case Helpers.TransferType.PlayerUpdate: UpdateOtherPlayer(msg); break;
+                case Helpers.TransferType.ProjectileUpdate: UpdateProjectile(msg); break;
+                case Helpers.TransferType.HealthUpdate:UpdateHealthBar(msg); break;
             }
         }
 

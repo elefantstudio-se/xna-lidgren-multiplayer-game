@@ -7,6 +7,14 @@ namespace Shared
 {
     public static class Helpers
     {
+        public enum TransferType
+        {
+            NewConnection = 1,
+            PlayerUpdate = 2,
+            ProjectileUpdate = 3,
+            HealthUpdate = 4
+        }
+
         public static int GetNewID()
         {
             var n = DateTime.Now.Ticks.ToString();
