@@ -162,7 +162,6 @@ namespace Client
 
         void ReadData(NetIncomingMessage msg)
         {
-            //var type = msg.ReadString();
             var type = msg.ReadTransferType();
             switch (type)
             {
@@ -177,7 +176,7 @@ namespace Client
         {
             var data = msg.ReadObjectData();
             localPlayer = playerFactory.NewPlayer(data.SessionID, data.ID, data.Index, data.Position, data.Angle, new KeyboardControls(Keys.Up, Keys.Down, Keys.Left, Keys.Right, Keys.Space));
-            localHealthBar = healthBarFactory.NewHealthBar(client.UniqueIdentifier, localPlayer.Index, new Vector2(localPlayer.Index*150 + 50, 25));
+            localHealthBar = healthBarFactory.NewHealthBar(client.UniqueIdentifier, Helpers.GetNewID(), localPlayer.Index, new Vector2(localPlayer.Index*150 + 50, 25));
             LocalObjectList.Add(localPlayer,localHealthBar);
         }
 
@@ -218,7 +217,7 @@ namespace Client
             }
             else
             {
-                var newHealthBar = healthBarFactory.NewHealthBar(client.UniqueIdentifier, healthData.PlayerIndex, new Vector2(healthData.PlayerIndex*150 + 50, 25));
+                var newHealthBar = healthBarFactory.NewHealthBar(client.UniqueIdentifier, healthData.ID, healthData.PlayerIndex, new Vector2(healthData.PlayerIndex*150 + 50, 25));
                 RemoteObjectsList.Add(newHealthBar,healthData);
             }
         }

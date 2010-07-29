@@ -19,11 +19,14 @@ namespace Server
         private static readonly Random randomizer = new Random();
         private static Dictionary<long, TransferableObjectData> players;
         private static Dictionary<long, ProjectileTransferableData> projectiles;
+        private static Dictionary<long, HealthTransferableData> playerHealth;
 
         static void Main(string[] args)
         {
             players = new Dictionary<long, TransferableObjectData>();
             projectiles = new Dictionary<long, ProjectileTransferableData>();
+            playerHealth = new Dictionary<long, HealthTransferableData>();
+
             NetPeerConfiguration config = new NetPeerConfiguration("xnaapp");
             config.EnableMessageType(NetIncomingMessageType.DiscoveryRequest);
             config.Port = PORT;
@@ -54,6 +57,7 @@ namespace Server
                     double now = NetTime.Now;
                     if (now > nextSendUpdates) //Send new updates
                     {
+                        SendHealthData();
                         SendProjectilesData();
 
                         for (int i = projectiles.Count; i > 0; i--)
@@ -97,6 +101,7 @@ namespace Server
             {
                 case Helpers.TransferType.PlayerUpdate: ReceivedPlayerData(msg); break;
                 case Helpers.TransferType.ProjectileUpdate: ReceivedProjectileData(msg); break;
+                case Helpers.TransferType.HealthUpdate: ReceivedHealthData(msg); break;
             }
         }
 
@@ -111,6 +116,12 @@ namespace Server
         {
             var data = msg.ReadProjectileData();
             projectiles[data.ID] = data;
+        }
+
+        static void ReceivedHealthData(NetIncomingMessage msg)
+        {
+            var data = msg.ReadHealthData();
+            playerHealth[data.ID] = data;
         }
 
         static TransferableObjectData SendInitialData(NetConnection receiver)
@@ -129,47 +140,36 @@ namespace Server
             return data;
         }
 
-        static void SendProjectilesData()
+        static void SendUpdates<T>(Dictionary<long, T> dataCollection, Helpers.TransferType type) where T:ITransferable
         {
-            if (projectiles.Count == 0)
-            {
-                return;
-            }
             foreach (var client in server.Connections)
             {
-                foreach (var projectile in projectiles.Values)
+                foreach (var entity in dataCollection.Values)
                 {
-                    if (projectile.SessionID == client.RemoteUniqueIdentifier)
+                    if (entity.SessionID == client.RemoteUniqueIdentifier)
                     {
                         continue;
                     }
                     NetOutgoingMessage om = server.CreateMessage();
-                    om.Write(Helpers.TransferType.ProjectileUpdate);
-                    om.Write(projectile);
-
-                    server.SendMessage(om, client, NetDeliveryMethod.UnreliableSequenced);
+                    om.Write(type);
+                    entity.WriteToMessage(om);
+                    server.SendMessage(om, client, entity.DeliveryMethod);
                 }
             }
+        }
+        static void SendProjectilesData()
+        {
+            SendUpdates(projectiles, Helpers.TransferType.ProjectileUpdate);
         }
 
         static void SendPlayersData()
         {
-            foreach (NetConnection client in server.Connections)
-            {
-                foreach (NetConnection otherClient in server.Connections)
-                {
-                    if (client.RemoteUniqueIdentifier == otherClient.RemoteUniqueIdentifier || !players.ContainsKey(otherClient.RemoteUniqueIdentifier))
-                    {
-                        continue;
-                    }
-                    NetOutgoingMessage om = server.CreateMessage();
-                    var data = players[otherClient.RemoteUniqueIdentifier];
-                    om.Write(Helpers.TransferType.PlayerUpdate);
-                    om.Write(data);
+            SendUpdates(players, Helpers.TransferType.PlayerUpdate);
+        }
 
-                    server.SendMessage(om, client, NetDeliveryMethod.Unreliable);
-                }
-            }
+        static void SendHealthData()
+        {
+            SendUpdates(playerHealth, Helpers.TransferType.HealthUpdate);
         }
 
     }

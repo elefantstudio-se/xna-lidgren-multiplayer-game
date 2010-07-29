@@ -23,9 +23,9 @@ namespace Client.Factories
             this.initialValue = initialValue;
             this.maxValue = maxValue;
         }
-        public HealthBar NewHealthBar(long sessionID, int index, Vector2 position)
+        public HealthBar NewHealthBar(long sessionID, int id, int index, Vector2 position)
         {
-            return new HealthBar(game, sessionID, Shared.Helpers.GetNewID(), texture, index, position, width, height, initialValue, maxValue);
+            return new HealthBar(game, sessionID, id, texture, index, position, width, height, initialValue, maxValue);
         }
     }
 }

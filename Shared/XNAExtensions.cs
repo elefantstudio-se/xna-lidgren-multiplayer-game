@@ -316,6 +316,7 @@ public static class XNAExtensions
 
     public static void Write(this NetOutgoingMessage message, HealthTransferableData healthData)
     {
+        message.Write(healthData.SessionID);
         message.Write(healthData.ID);
         message.Write(healthData.IsValid);
         message.Write(healthData.PlayerIndex);
