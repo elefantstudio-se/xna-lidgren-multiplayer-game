@@ -7,6 +7,7 @@ namespace Shared
 {
     public interface ITransferable
     {
+        long SessionID { get; set; }
         int ID { get; set; }
         bool IsValid { get; set; }
     }

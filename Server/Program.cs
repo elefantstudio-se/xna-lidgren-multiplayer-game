@@ -18,12 +18,12 @@ namespace Server
         private static short nextPlayerIndex;
         private static readonly Random randomizer = new Random();
         private static Dictionary<long, TransferableObjectData> players;
-        private static Dictionary<long, TransferableObjectData> projectiles;
+        private static Dictionary<long, ProjectileTransferableData> projectiles;
 
         static void Main(string[] args)
         {
             players = new Dictionary<long, TransferableObjectData>();
-            projectiles = new Dictionary<long, TransferableObjectData>();
+            projectiles = new Dictionary<long, ProjectileTransferableData>();
             NetPeerConfiguration config = new NetPeerConfiguration("xnaapp");
             config.EnableMessageType(NetIncomingMessageType.DiscoveryRequest);
             config.Port = PORT;
@@ -103,18 +103,14 @@ namespace Server
         static void ReceivedPlayerData(NetIncomingMessage msg)
         {
             var data = msg.ReadObjectData();
-            if (players.ContainsKey(data.SessionID))
-            {
-                players[data.SessionID] = data;
-            }
+            players[data.SessionID] = data;
             SendPlayersData();
         }
 
         static void ReceivedProjectileData(NetIncomingMessage msg)
         {
-            var data = msg.ReadObjectData();
+            var data = msg.ReadProjectileData();
             projectiles[data.ID] = data;
-           
         }
 
         static TransferableObjectData SendInitialData(NetConnection receiver)

@@ -1,7 +1,8 @@
-﻿using FarseerGames.FarseerPhysics;
+﻿using Client.Projectiles;
+using FarseerGames.FarseerPhysics;
 using Microsoft.Xna.Framework;
 
-namespace Client.Projectiles
+namespace Client.Factories
 {
     class ProjectileFactory
     {

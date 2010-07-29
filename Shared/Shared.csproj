@@ -54,6 +54,7 @@
     <Compile Include="HealthTransferableData.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="ITransferable.cs" />
+    <Compile Include="ProjectileTransferableData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TransferableObjectData.cs" />
     <Compile Include="XNAExtensions.cs" />

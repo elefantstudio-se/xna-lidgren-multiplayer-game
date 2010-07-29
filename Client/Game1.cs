@@ -1,8 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Client.Entities;
+using Client.Factories;
 using Client.Players;
-using Client.Projectiles;
 using FarseerGames.FarseerPhysics;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
@@ -27,8 +28,10 @@ namespace Client
         private NetClient client;
         private RemoteObjectList RemoteObjectsList;
         private LocalObjectList LocalObjectList;
+        private Dictionary<long, PlayerRemote> remotePlayers;
         private PlayerFactory playerFactory;
         private ProjectileFactory projectileFactory;
+        private HealthBarFactory healthBarFactory;
         private LocalPlayer localPlayer;
         private HealthBar localHealthBar;
         private double nextSendUpdate = NetTime.Now;
@@ -70,9 +73,11 @@ namespace Client
 
             RemoteObjectsList = new RemoteObjectList();
             LocalObjectList = new LocalObjectList();
+            remotePlayers = new Dictionary<long, PlayerRemote>();
 
             projectileFactory = new ProjectileFactory(this, physicsSimulator, playerZOrder, 5, 50, "Players/Projectiles/",SharedLists.ProjectileTextureNames);
             playerFactory = new PlayerFactory(this, physicsSimulator, 0, playerMass, playerSpeed, "Players/Avatars/",SharedLists.PlayerTextureNames, projectileFactory);
+            healthBarFactory = new HealthBarFactory(this, 70, 20, 100, 100);
 
 
             client.DiscoverKnownPeer(host, port);
@@ -117,6 +122,7 @@ namespace Client
                     //Send periodic updates
                     SendProjectilesData();
                     SendLocalPlayerData();
+                    SendHealthData();
                     nextSendUpdate += updateInterval;
                 }
             }
@@ -162,6 +168,7 @@ namespace Client
                 case "new_connection": NewServerConnection(msg); break;
                 case "player_data": UpdateOtherPlayer(msg); break;
                 case "projectile_data": UpdateProjectile(msg); break;
+                case "healthbar_data":UpdateHealthBar(msg); break;
             }
         }
 
@@ -169,8 +176,7 @@ namespace Client
         {
             var data = msg.ReadObjectData();
             localPlayer = playerFactory.NewPlayer(data.SessionID, data.ID, data.Index, data.Position, data.Angle, new KeyboardControls(Keys.Up, Keys.Down, Keys.Left, Keys.Right, Keys.Space));
-            localHealthBar = new HealthBar(this, client.UniqueIdentifier,Helpers.GetNewID(),"blankpixel",new Vector2(localPlayer.Index * 100, 25));
-            localHealthBar.Position = new Vector2(localHealthBar.Position.X + localHealthBar.Width / 2 + 15, localHealthBar.Position.Y);
+            localHealthBar = healthBarFactory.NewHealthBar(client.UniqueIdentifier, localPlayer.Index, new Vector2(localPlayer.Index*150 + 50, 25));
             LocalObjectList.Add(localPlayer,localHealthBar);
         }
 
@@ -185,28 +191,40 @@ namespace Client
             {
                 PlayerRemote newPlayer = playerFactory.NewRemotePlayer(playerData.SessionID, playerData.ID, playerData.Index, playerData.Position, playerData.Angle);
                 RemoteObjectsList.Add(newPlayer, playerData);
+                remotePlayers.Add(newPlayer.SessionID,newPlayer);
             }
         }
 
         void UpdateProjectile(NetIncomingMessage msg)
         {
-            var projectileData = msg.ReadObjectData();
+            var projectileData = msg.ReadProjectileData();
             if (RemoteObjectsList.Exists(projectileData.ID))
             {
                 RemoteObjectsList.UpdateData(projectileData);
             }
             else
             {
-                RemoteObjectsList.Add(projectileFactory.NewRemoteProjectile(projectileData.SessionID, projectileData.ID, projectileData.Index, projectileData.Position, projectileData.Angle), projectileData);
+                RemoteObjectsList.Add(projectileFactory.NewRemoteProjectile(projectileData.SessionID, projectileData.ID, remotePlayers[projectileData.SessionID].Index, projectileData.Position, projectileData.Angle), projectileData);
+            }
+        }
+
+        void UpdateHealthBar(NetIncomingMessage msg)
+        {
+            var healthData = msg.ReadHealthData();
+            if (RemoteObjectsList.Exists(healthData.ID))
+            {
+                RemoteObjectsList.UpdateData(healthData);
+            }
+            else
+            {
+                var newHealthBar = healthBarFactory.NewHealthBar(client.UniqueIdentifier, healthData.PlayerIndex, new Vector2(healthData.PlayerIndex*150 + 50, 25));
+                RemoteObjectsList.Add(newHealthBar,healthData);
             }
         }
 
         void SendLocalPlayerData()
         {
-            NetOutgoingMessage om = client.CreateMessage();
-            om.Write("player_data");
-            om.Write(new TransferableObjectData(localPlayer.SessionID, localPlayer.ID, localPlayer.Index, localPlayer.Position, localPlayer.Angle, localPlayer.IsValid));
-            client.SendMessage(om, NetDeliveryMethod.Unreliable);
+            localPlayer.SendUpdates(client);
         }
 
         void SendProjectilesData()
@@ -214,15 +232,17 @@ namespace Client
             for (int i = localPlayer.Projectiles.Count; i > 0; i--)
             {
                 var projectile = localPlayer.Projectiles.ElementAt(i - 1);
-                NetOutgoingMessage om = client.CreateMessage();
-                om.Write("projectile_data");
-                om.Write(new TransferableObjectData(localPlayer.SessionID, projectile.ID, localPlayer.Index, projectile.Position, projectile.Angle, projectile.IsValid));
-                client.SendMessage(om, NetDeliveryMethod.UnreliableSequenced);
+                projectile.SendUpdates(client);
                 if (!projectile.IsValid)
                 {
                     localPlayer.RemoveProjectile(projectile);
                 }
             }
+        }
+
+        void SendHealthData()
+        {
+            localHealthBar.SendUpdates(client);
         }
     }
 }

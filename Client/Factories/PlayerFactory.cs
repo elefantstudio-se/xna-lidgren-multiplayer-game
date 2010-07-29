@@ -1,8 +1,8 @@
-﻿using Client.Projectiles;
+﻿using Client.Players;
 using FarseerGames.FarseerPhysics;
 using Microsoft.Xna.Framework;
 
-namespace Client.Players
+namespace Client.Factories
 {
     class PlayerFactory
     {

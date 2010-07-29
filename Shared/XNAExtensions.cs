@@ -302,6 +302,7 @@ public static class XNAExtensions
         message.Write(playerData.IsValid);
     }
 
+
     public static TransferableObjectData ReadObjectData(this NetIncomingMessage message)
     {
         long sessionId = message.ReadInt64();
@@ -317,14 +318,36 @@ public static class XNAExtensions
     {
         message.Write(healthData.ID);
         message.Write(healthData.IsValid);
+        message.Write(healthData.PlayerIndex);
         message.Write(healthData.Value);
     }
 
     public static HealthTransferableData ReadHealthData(this NetIncomingMessage message)
     {
+        long sessionID = message.ReadInt64();
         int id = message.ReadInt32();
         bool isValid = message.ReadBoolean();
+        int playerIndex = message.ReadInt32();
         float value = message.ReadFloat();
-        return new HealthTransferableData(id, isValid, value);
+        return new HealthTransferableData(sessionID, id, isValid, playerIndex, value);
+    }
+
+    public static void Write(this NetOutgoingMessage message, ProjectileTransferableData projectileData)
+    {
+        message.Write(projectileData.SessionID);
+        message.Write(projectileData.ID);
+        message.Write(projectileData.IsValid);
+        message.Write(projectileData.Position);
+        message.Write(projectileData.Angle);
+    }
+    
+    public static ProjectileTransferableData ReadProjectileData(this NetIncomingMessage message)
+    {
+        long sessionID = message.ReadInt64();
+        int id = message.ReadInt32();
+        bool isValid = message.ReadBoolean();
+        Vector2 position = message.ReadVector2();
+        float angle = message.ReadFloat();
+        return new ProjectileTransferableData(sessionID, id,isValid,position,angle);
     }
 }

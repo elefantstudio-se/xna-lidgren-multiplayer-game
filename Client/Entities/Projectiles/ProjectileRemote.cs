@@ -16,7 +16,7 @@ namespace Client.Projectiles
 
         public void Update(GameTime gameTime, ITransferable remoteData)
         {
-            var data = (TransferableObjectData) remoteData;
+            var data = (ProjectileTransferableData) remoteData;
             //if (!IsInScreen)
             //{
             //    IsValid = false;

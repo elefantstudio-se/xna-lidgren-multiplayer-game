@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Client.Factories;
 using Client.Projectiles;
 using FarseerGames.FarseerPhysics;
 using FarseerGames.FarseerPhysics.Collisions;
+using Lidgren.Network;
 using Microsoft.Xna.Framework;
 using Shared;
 
 namespace Client.Players
 {
-    class LocalPlayer:Player
+    class LocalPlayer:Player, IUpdateSender
     {
         public enum MoveDirection
         {
@@ -105,6 +107,14 @@ namespace Client.Players
         public void RemoveProjectile(ProjectileLocal projectile)
         {
             Projectiles.Remove(projectile);
+        }
+
+        public void SendUpdates(NetClient client)
+        {
+            NetOutgoingMessage om = client.CreateMessage();
+            om.Write("player_data");
+            om.Write(new TransferableObjectData(SessionID, ID, Index, Position, Angle, IsValid));
+            client.SendMessage(om, NetDeliveryMethod.Unreliable);
         }
     }
 }

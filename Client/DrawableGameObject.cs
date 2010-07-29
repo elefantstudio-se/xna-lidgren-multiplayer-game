@@ -14,14 +14,14 @@ namespace Client
         public abstract float Angle{ get; set;}
         public float Speed { get; set; }
         public float ZOrder { get; set; }
-        public  int Width
+        public virtual int Width
         {
             get
             {
                 return Texture.Width;
             }
         }
-        public  int Height
+        public virtual int Height
         {
             get
             {
