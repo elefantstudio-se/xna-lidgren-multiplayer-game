@@ -24,16 +24,18 @@ namespace Client.Projectiles
         {
             Body.ApplyImpulse(Velocity * Speed);
         }
+
         bool OnCollision(Geom geom1, Geom geom2, ContactList contactList)
         {
-            return false;
+            return true;
         }
+
         public override void Update(GameTime gameTime)
         {
-            //if (!IsInScreen)
-            //{
-            //    IsValid = false;
-            //}
+            if (!IsInScreen)
+            {
+                IsValid = false;
+            }
             base.Update(gameTime);
             //Position += Velocity;
         }

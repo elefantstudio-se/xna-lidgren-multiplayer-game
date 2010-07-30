@@ -7,20 +7,24 @@ using Microsoft.Xna.Framework;
 
 namespace Shared
 {
-    public class ProjectileTransferableData:ITransferable
+    public class ProjectileTransferableData : ITransferable
     {
         public long SessionID { get; set; }
 
         public int ID { get; set; }
-        public bool IsValid{ get; set; }
+        public bool IsValid { get; set; }
         public NetDeliveryMethod DeliveryMethod
         {
-            get { return NetDeliveryMethod.UnreliableSequenced;}
+            get { return NetDeliveryMethod.UnreliableSequenced; }
         }
 
         public void WriteToMessage(NetOutgoingMessage message)
         {
-            message.Write(this);
+            message.Write(SessionID);
+            message.Write(ID);
+            message.Write(IsValid);
+            message.Write(Position);
+            message.Write(Angle);
         }
 
         public Vector2 Position { get; set; }
@@ -33,6 +37,15 @@ namespace Shared
             IsValid = isValid;
             Position = position;
             Angle = angle;
+        }
+
+        public ProjectileTransferableData(NetIncomingMessage message)
+        {
+            SessionID = message.ReadInt64();
+            ID = message.ReadInt32();
+            IsValid = message.ReadBoolean();
+            Position = message.ReadVector2();
+            Angle = message.ReadFloat();
         }
     }
 }

@@ -19,13 +19,13 @@ namespace Client.Players
 
         public void Update(GameTime gametime, ITransferable remoteData)
         {
-            var data = (TransferableObjectData) remoteData;
+            var data = (PlayerTransferableData) remoteData;
             Console.WriteLine(data.Position);
             UpdatePosition(data);
             UpdateAngle(data);
         }
 
-        void UpdatePosition(TransferableObjectData remoteData)
+        void UpdatePosition(PlayerTransferableData remoteData)
         {
             if (remoteData == null || Position == remoteData.Position)
             {
@@ -79,7 +79,7 @@ namespace Client.Players
             */
         }
 
-        void UpdateAngle(TransferableObjectData remoteData)
+        void UpdateAngle(PlayerTransferableData remoteData)
         {
             if (remoteData == null)
             {

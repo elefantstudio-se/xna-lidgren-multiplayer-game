@@ -7,7 +7,6 @@ namespace Shared
 {
     public class HealthTransferableData:ITransferable
     {
-
         public long SessionID { get; set; }
         public int ID { get; set; }
         public bool IsValid{ get; set;}
@@ -18,7 +17,11 @@ namespace Shared
 
         public void WriteToMessage(NetOutgoingMessage message)
         {
-            message.Write(this);
+            message.Write(SessionID);
+            message.Write(ID);
+            message.Write(IsValid);
+            message.Write(PlayerIndex);
+            message.Write(Value);
         }
 
         public int PlayerIndex { get; set; }
@@ -31,6 +34,15 @@ namespace Shared
             IsValid = isValid;
             PlayerIndex = playerIndex;
             Value = value;
+        }
+
+        public HealthTransferableData(NetIncomingMessage message)
+        {
+            SessionID = message.ReadInt64();
+            ID = message.ReadInt32();
+            IsValid = message.ReadBoolean();
+            PlayerIndex = message.ReadInt32();
+            Value = message.ReadFloat();
         }
     }
 }

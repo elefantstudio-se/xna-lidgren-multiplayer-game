@@ -292,64 +292,10 @@ public static class XNAExtensions
         return retval;
     }
 
-    public static void Write(this NetOutgoingMessage message, TransferableObjectData playerData)
-    {
-        message.Write(playerData.SessionID);
-        message.Write(playerData.ID);
-        message.Write(playerData.Index);
-        message.Write(playerData.Position);
-        message.Write(playerData.Angle);
-        message.Write(playerData.IsValid);
-    }
 
-
-    public static TransferableObjectData ReadObjectData(this NetIncomingMessage message)
+    public static void Write(this NetOutgoingMessage message, ITransferable data)
     {
-        long sessionId = message.ReadInt64();
-        int id = message.ReadInt32();
-        short index = message.ReadInt16();
-        Vector2 position = message.ReadVector2();
-        float angle = message.ReadFloat();
-        bool isValid = message.ReadBoolean();
-        return new TransferableObjectData(sessionId, id, index, position, angle, isValid);
-    }
-
-    public static void Write(this NetOutgoingMessage message, HealthTransferableData healthData)
-    {
-        message.Write(healthData.SessionID);
-        message.Write(healthData.ID);
-        message.Write(healthData.IsValid);
-        message.Write(healthData.PlayerIndex);
-        message.Write(healthData.Value);
-    }
-
-    public static HealthTransferableData ReadHealthData(this NetIncomingMessage message)
-    {
-        long sessionID = message.ReadInt64();
-        int id = message.ReadInt32();
-        bool isValid = message.ReadBoolean();
-        int playerIndex = message.ReadInt32();
-        float value = message.ReadFloat();
-        return new HealthTransferableData(sessionID, id, isValid, playerIndex, value);
-    }
-
-    public static void Write(this NetOutgoingMessage message, ProjectileTransferableData projectileData)
-    {
-        message.Write(projectileData.SessionID);
-        message.Write(projectileData.ID);
-        message.Write(projectileData.IsValid);
-        message.Write(projectileData.Position);
-        message.Write(projectileData.Angle);
-    }
-    
-    public static ProjectileTransferableData ReadProjectileData(this NetIncomingMessage message)
-    {
-        long sessionID = message.ReadInt64();
-        int id = message.ReadInt32();
-        bool isValid = message.ReadBoolean();
-        Vector2 position = message.ReadVector2();
-        float angle = message.ReadFloat();
-        return new ProjectileTransferableData(sessionID, id,isValid,position,angle);
+        data.WriteToMessage(message);
     }
 
     public static void Write(this NetOutgoingMessage message, Helpers.TransferType type)

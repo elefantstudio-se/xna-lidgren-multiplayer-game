@@ -92,7 +92,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="dev.cs" />
     <Compile Include="Entities\Players\EventArguments\BumpedAnotherPlayerEventArgs.cs" />
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="DrawableGameObject.cs" />

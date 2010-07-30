@@ -17,13 +17,13 @@ namespace Server
         private static NetServer server;
         private static short nextPlayerIndex;
         private static readonly Random randomizer = new Random();
-        private static Dictionary<long, TransferableObjectData> players;
+        private static Dictionary<long, PlayerTransferableData> players;
         private static Dictionary<long, ProjectileTransferableData> projectiles;
         private static Dictionary<long, HealthTransferableData> playerHealth;
 
         static void Main(string[] args)
         {
-            players = new Dictionary<long, TransferableObjectData>();
+            players = new Dictionary<long, PlayerTransferableData>();
             projectiles = new Dictionary<long, ProjectileTransferableData>();
             playerHealth = new Dictionary<long, HealthTransferableData>();
 
@@ -107,28 +107,28 @@ namespace Server
 
         static void ReceivedPlayerData(NetIncomingMessage msg)
         {
-            var data = msg.ReadObjectData();
+            var data = new PlayerTransferableData(msg);
             players[data.SessionID] = data;
             SendPlayersData();
         }
 
         static void ReceivedProjectileData(NetIncomingMessage msg)
         {
-            var data = msg.ReadProjectileData();
+            var data = new ProjectileTransferableData(msg);
             projectiles[data.ID] = data;
         }
 
         static void ReceivedHealthData(NetIncomingMessage msg)
         {
-            var data = msg.ReadHealthData();
+            var data = new HealthTransferableData(msg);
             playerHealth[data.ID] = data;
         }
 
-        static TransferableObjectData SendInitialData(NetConnection receiver)
+        static PlayerTransferableData SendInitialData(NetConnection receiver)
         {
             short playerIndex = nextPlayerIndex++;
             Vector2 initialPosition = new Vector2(randomizer.Next(screenWidth), randomizer.Next(screenHeight));
-            var data = new TransferableObjectData(receiver.RemoteUniqueIdentifier, Helpers.GetNewID(), playerIndex, initialPosition, 0f, true);
+            var data = new PlayerTransferableData(receiver.RemoteUniqueIdentifier, Helpers.GetNewID(), playerIndex, initialPosition, 0f, true);
             NetOutgoingMessage om = server.CreateMessage();
             om.Write(Helpers.TransferType.NewConnection);
             om.Write(data);

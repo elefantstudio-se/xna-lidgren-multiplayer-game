@@ -113,7 +113,7 @@ namespace Client.Players
         {
             NetOutgoingMessage om = client.CreateMessage();
             om.Write(Helpers.TransferType.PlayerUpdate);
-            om.Write(new TransferableObjectData(SessionID, ID, Index, Position, Angle, IsValid));
+            om.Write(new PlayerTransferableData(SessionID, ID, Index, Position, Angle, IsValid));
             client.SendMessage(om, NetDeliveryMethod.Unreliable);
         }
     }

@@ -56,7 +56,7 @@
     <Compile Include="ITransferable.cs" />
     <Compile Include="ProjectileTransferableData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TransferableObjectData.cs" />
+    <Compile Include="PlayerTransferableData.cs" />
     <Compile Include="XNAExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

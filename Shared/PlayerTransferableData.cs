@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace Shared
 {
-    public class TransferableObjectData:ITransferable
+    public class PlayerTransferableData:ITransferable
     {
         public long SessionID { get; set; }
         public int ID { get; set; }
@@ -22,10 +22,15 @@ namespace Shared
 
         public void WriteToMessage(NetOutgoingMessage message)
         {
-            message.Write(this);
+            message.Write(SessionID);
+            message.Write(ID);
+            message.Write(Index);
+            message.Write(Position);
+            message.Write(Angle);
+            message.Write(IsValid);
         }
 
-        public TransferableObjectData(long sessionId, int id, short index, Vector2 position, float angle, bool isValid)
+        public PlayerTransferableData(long sessionId, int id, short index, Vector2 position, float angle, bool isValid)
         {
             SessionID = sessionId;
             ID = id;
@@ -33,6 +38,16 @@ namespace Shared
             Position = position;
             Angle = angle;
             IsValid = isValid;
+        }
+
+        public PlayerTransferableData(NetIncomingMessage message)
+        {
+            SessionID = message.ReadInt64();
+            ID = message.ReadInt32();
+            Index = message.ReadInt16();
+            Position = message.ReadVector2();
+            Angle = message.ReadFloat();
+            IsValid = message.ReadBoolean();
         }
     }
 }

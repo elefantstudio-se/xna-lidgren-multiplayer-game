@@ -20,7 +20,7 @@ namespace Client
         public static Color BackgroundColor { get; set; }
         public static Rectangle Screen { get; set; }
 
-        private readonly int port = 8081;
+        private readonly int port;
         private readonly string host;
 
         private GraphicsDeviceManager graphics;
@@ -117,9 +117,8 @@ namespace Client
 
             if (NetTime.Now > nextSendUpdate)
             {
-                if (localPlayer != null)
+                if (localPlayer != null) //Send periodic updates
                 {
-                    //Send periodic updates
                     SendProjectilesData();
                     SendLocalPlayerData();
                     SendHealthData();
@@ -174,7 +173,7 @@ namespace Client
 
         void NewServerConnection(NetIncomingMessage msg)
         {
-            var data = msg.ReadObjectData();
+            var data = new PlayerTransferableData(msg);
             localPlayer = playerFactory.NewPlayer(data.SessionID, data.ID, data.Index, data.Position, data.Angle, new KeyboardControls(Keys.Up, Keys.Down, Keys.Left, Keys.Right, Keys.Space));
             localHealthBar = healthBarFactory.NewHealthBar(client.UniqueIdentifier, Helpers.GetNewID(), localPlayer.Index, new Vector2(localPlayer.Index*150 + 50, 25));
             LocalObjectList.Add(localPlayer,localHealthBar);
@@ -182,7 +181,7 @@ namespace Client
 
         void UpdateOtherPlayer(NetIncomingMessage msg)
         {
-            var playerData = msg.ReadObjectData();
+            var playerData = new PlayerTransferableData(msg);
             if (RemoteObjectsList.Exists(playerData.ID))
             {
                 RemoteObjectsList.UpdateData(playerData);
@@ -197,7 +196,7 @@ namespace Client
 
         void UpdateProjectile(NetIncomingMessage msg)
         {
-            var projectileData = msg.ReadProjectileData();
+            var projectileData = new ProjectileTransferableData(msg);
             if (RemoteObjectsList.Exists(projectileData.ID))
             {
                 RemoteObjectsList.UpdateData(projectileData);
@@ -210,7 +209,7 @@ namespace Client
 
         void UpdateHealthBar(NetIncomingMessage msg)
         {
-            var healthData = msg.ReadHealthData();
+            var healthData = new HealthTransferableData(msg);
             if (RemoteObjectsList.Exists(healthData.ID))
             {
                 RemoteObjectsList.UpdateData(healthData);
