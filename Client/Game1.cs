@@ -99,6 +99,10 @@ namespace Client
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
+            NetOutgoingMessage om = client.CreateMessage();
+            om.Write(Helpers.TransferType.ClientDisconnect);
+            om.Write(new ClientDisconnectedTransferableData(client.UniqueIdentifier, localPlayer.Index));
+            client.SendMessage(om, NetDeliveryMethod.ReliableOrdered);
         }
 
         /// <summary>

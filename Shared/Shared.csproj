@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientDisconnectedTransferableData.cs" />
     <Compile Include="HealthTransferableData.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="ITransferable.cs" />

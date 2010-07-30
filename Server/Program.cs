@@ -15,7 +15,8 @@ namespace Server
         private static int screenWidth = 640;
         private static int screenHeight = 480;
         private static NetServer server;
-        private static short nextPlayerIndex;
+        private static short maxPlayers = 4;
+        private static bool[] usedPlayerPositions;
         private static readonly Random randomizer = new Random();
         private static Dictionary<long, PlayerTransferableData> players;
         private static Dictionary<long, ProjectileTransferableData> projectiles;
@@ -23,6 +24,7 @@ namespace Server
 
         static void Main(string[] args)
         {
+            usedPlayerPositions = new bool[maxPlayers];
             players = new Dictionary<long, PlayerTransferableData>();
             projectiles = new Dictionary<long, ProjectileTransferableData>();
             playerHealth = new Dictionary<long, HealthTransferableData>();
@@ -102,9 +104,17 @@ namespace Server
                 case Helpers.TransferType.PlayerUpdate: ReceivedPlayerData(msg); break;
                 case Helpers.TransferType.ProjectileUpdate: ReceivedProjectileData(msg); break;
                 case Helpers.TransferType.HealthUpdate: ReceivedHealthData(msg); break;
+                case Helpers.TransferType.ClientDisconnect: ReceivedPlayerDisconnection(msg); break;
             }
         }
 
+        static void ReceivedPlayerDisconnection(NetIncomingMessage msg)
+        {
+            var data = new ClientDisconnectedTransferableData(msg);
+            usedPlayerPositions[data.PlayerIndex] = false;
+            players.Remove(data.SessionID);
+            Console.WriteLine(String.Format("Player {0} disconnected [{1}]", data.PlayerIndex, data.SessionID));
+        }
         static void ReceivedPlayerData(NetIncomingMessage msg)
         {
             var data = new PlayerTransferableData(msg);
@@ -126,7 +136,13 @@ namespace Server
 
         static PlayerTransferableData SendInitialData(NetConnection receiver)
         {
-            short playerIndex = nextPlayerIndex++;
+            short playerIndex = GetNextAvailablePlayerPosition();
+            if (playerIndex == -1)
+            {
+                //No more positions available
+                //TODO: do something when not more seats are available
+            }
+            usedPlayerPositions[playerIndex] = true;
             Vector2 initialPosition = new Vector2(randomizer.Next(screenWidth), randomizer.Next(screenHeight));
             var data = new PlayerTransferableData(receiver.RemoteUniqueIdentifier, Helpers.GetNewID(), playerIndex, initialPosition, 0f, true);
             NetOutgoingMessage om = server.CreateMessage();
@@ -134,9 +150,7 @@ namespace Server
             om.Write(data);
             server.SendMessage(om, receiver, NetDeliveryMethod.Unreliable);
 
-            Console.WriteLine("New player connected:" + receiver.RemoteUniqueIdentifier);
-            Console.WriteLine(String.Format("X: {0}, Y: {1}", initialPosition.X, initialPosition.Y));
-
+            Console.WriteLine(String.Format("Player {0} connected [{1}]", data.Index, data.SessionID));
             return data;
         }
 
@@ -170,6 +184,18 @@ namespace Server
         static void SendHealthData()
         {
             SendUpdates(playerHealth, Helpers.TransferType.HealthUpdate);
+        }
+
+        static short GetNextAvailablePlayerPosition()
+        {
+            for (short i = 0; i < usedPlayerPositions.Length; i++)
+            {
+                if (!usedPlayerPositions[i])
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
 
     }

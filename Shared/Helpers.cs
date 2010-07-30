@@ -10,9 +10,10 @@ namespace Shared
         public enum TransferType
         {
             NewConnection = 1,
-            PlayerUpdate = 2,
-            ProjectileUpdate = 3,
-            HealthUpdate = 4
+            ClientDisconnect = 2,
+            PlayerUpdate = 3,
+            ProjectileUpdate = 4,
+            HealthUpdate = 5
         }
 
         public static int GetNewID()
